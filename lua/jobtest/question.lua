@@ -8,21 +8,26 @@ if ( SERVER ) then
     AccessorFunc( Question, 'answer_index', 'AnswerIndex', FORCE_NUMBER ) end
 
 --[[
-Args: Table questionData
-Desc: question class constructor
+Args: Table questionData, (SERVER only) Number answerIndex
+Desc: Question class constructor
 ]]
-function Question:New( questionData )
+function Question:New( questionData, answerIndex )
     local this = table.Copy( Question )
 
-    if ( table.Count( questionData ) >= 3 and table.Count( questionData ) <= 5 ) then
-        this:SetChoiceCount( table.Count( questionData ) - 1 )
+    --> TODO: Make max choices configurable
+    if ( SERVER and #questionData >= 2 and #questionData <= 4 and answerIndex and isnumber( answerIndex ) ) then
+        this:SetChoiceCount( #questionData )
         this:SetChosenIndex( 0 )
         for i = 1, this:GetChoiceCount() do
             this.choices[i] = questionData[i] end
 
-        if ( SERVER ) then
-            this:SetAnswerIndex( questionData[this:GetChoiceCount() + 1] ) end
-    else
+        this:SetAnswerIndex( answerIndex )
+    elseif ( CLIENT and #questionData >= 2 and #questionData <= 4 ) then
+        this:SetChoiceCount( #questionData )
+        this:SetChosenIndex( 0 )
+        for i = 1, this:GetChoiceCount() do
+            this.choices[i] = questionData[i] end
+    elseif ( SERVER ) then
         print( ' [X] Jobtest: Invalid questionData.' )
         return
     end
@@ -31,8 +36,8 @@ function Question:New( questionData )
 end
 
 --[[
-Args: Table questionData
+Args: Table questionData, (SERVER only) Number answerIndex
 Desc: question class constructor global wrapper
 ]]
-function jobtest:Question( questionData )
-    return Question:New( questionData ) end
+function jobtest:Question( questionData, answerIndex )
+    return Question:New( questionData, answerIndex or nil ) end
