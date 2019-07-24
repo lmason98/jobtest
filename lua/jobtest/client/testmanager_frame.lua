@@ -1,44 +1,93 @@
-local LEFTPANEL = { }
-local RIGHTPANEL = { }
+local SELECTIONPANEL = { }
+local EDITORPANEL = { }
 local FRAME = { }
+local theme -- initalized on frame init
+
+--[[
+Desc: Initializes the text manager editor panel
+]]
+function EDITORPANEL:Init( )
+    local parent = self:GetParent()
+    local this = self
+
+    self:DockMargin( 0, 10, 0, 0 )
+    self:Dock( FILL )
+    self:InvalidateParent( true )
+    self:Hide()
+
+    jobtest:CreateBtn( 'Back', self, BOTTOM, function( ) self:Hide() parent.selector:Show() end )
+end
+
+function EDITORPANEL:Paint( w, h )
+    surface.SetDrawColor( theme.background )
+    surface.DrawRect( 0, 0, w, h )
+
+    surface.SetDrawColor( theme.outline )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+end
+
+vgui.Register( 'JobTestManagerEditorPanel', EDITORPANEL, 'DPanel' )
 
 --[[
 Desc: Initializes the test manager selection panel
 ]]
-function LEFTPANEL:Init( )
+function SELECTIONPANEL:Init( )
     local parent = self:GetParent()
+    local this = self
 
-    self:Dock( LEFT )
+    self:DockMargin( 0, 10, 0, 0 )
+    self:Dock( FILL )
     self:InvalidateParent( true )
-    self:SetWide( ( parent:GetWide() / 2 ) - 5 )
-end
 
-vgui.Register( 'JobTestManagerSelectionPanel', LEFTPANEL, 'DPanel' )
+    jobtest:CreateBtn( 'Create New Test', self, TOP, function( ) self:Hide() parent.editor:Show() end )
+end
 
 --[[
-Desc: Initializes the test manager editor panel
+Args: Number w, Number h
+Desc: Draws the test manager editor panel
 ]]
-function RIGHTPANEL:Init( )
-    local parent = self:GetParent()
+function SELECTIONPANEL:Paint( w, h )
+    surface.SetDrawColor( theme.background )
+    surface.DrawRect( 0, 0, w, h )
 
-    self:Dock( LEFT )
-    self:InvalidateParent( true )
-    self:SetWide( ( parent:GetWide() / 2 ) - 5 )
+    surface.SetDrawColor( theme.outline )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+
+    if ( #jobtest.tests < 1 ) then
+        draw.SimpleText( 'No Exisiting tests found.', 'jobtest_7b', w / 2, h / 2, theme.text,
+            TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER ) end
 end
 
-vgui.Register( 'JobTestManagerEditorPanel', RIGHTPANEL, 'DPanel' )
+vgui.Register( 'JobTestManagerSelectionPanel', SELECTIONPANEL, 'DPanel' )
 
 --[[
 Desc: Initializes the test manager frame
 ]]
 function FRAME:Init( )
-    self:SetSize( 800, 600 )
+    self:SetSize( 500, 400 )
     self:Center()
-    self:SetTitle( 'Job Test Manager' )
+    self.text = 'Job Test Manager'
+    self:SetTitle( '' )
     self:MakePopup()
 
-    self.leftpnl = vgui.Create( 'JobTestManagerEditorPanel', self )
-    self.rightpnl = vgui.Create( 'JobTestManagerSelectionPanel', self )
+    theme = jobtest:GetTheme()
+
+    self.selector = vgui.Create( 'JobTestManagerSelectionPanel', self )
+    self.editor = vgui.Create( 'JobTestManagerEditorPanel', self )
+end
+
+--[[
+Args: Number w, Number h
+Desc: Draws the test manager frame
+]]
+function FRAME:Paint( w, h )
+    surface.SetDrawColor( theme.main )
+    surface.DrawRect( 0, 0, w, h )
+
+    surface.SetDrawColor( theme.outline )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+
+    draw.SimpleText( self.text, 'jobtest_8b', 10, 10, theme.textselected )
 end
 
 vgui.Register( 'JobTestManagerFrame', FRAME, 'DFrame' )
@@ -46,5 +95,3 @@ vgui.Register( 'JobTestManagerFrame', FRAME, 'DFrame' )
 concommand.Add( 'opentestmanager', function()
     vgui.Create( 'JobTestManagerFrame' )
 end )
-
-print( 'hey!' )

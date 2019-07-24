@@ -10,3 +10,9 @@ surface.CreateFont( 'jobtest_7b', {
     weight = 800,
     antialias = true
 } )
+surface.CreateFont( 'jobtest_8b', {
+    font = 'Roboto',
+    size = ScreenScale( 8 ),
+    weight = 800,
+    antialias = true
+} )
