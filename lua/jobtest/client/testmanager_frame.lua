@@ -4,6 +4,23 @@ local FRAME = { }
 local theme -- initalized on frame init
 
 --[[
+Desc: Get's the job the test is intended for
+]]
+function EDITORPANEL:JobForm( )
+    self.job = vgui.Create( 'DComboBox', self )
+    self.job:DockMargin( 10, 10, 10, 0 )
+    self.job:Dock( TOP )
+    self.job:InvalidateParent( true )
+    self.job:SetTall( 30 )
+    self.job:SetValue( 'Job' )
+
+    for k, team in pairs( team.GetAllTeams() ) do
+        if ( k > 0 and k < 1000 ) then
+            self.job:AddChoice( team.Name ) end
+    end
+end
+
+--[[
 Desc: Initializes the text manager editor panel
 ]]
 function EDITORPANEL:Init( )
@@ -14,6 +31,15 @@ function EDITORPANEL:Init( )
     self:Dock( FILL )
     self:InvalidateParent( true )
     self:Hide()
+
+    --> test job
+    self:JobForm()
+    --> test name
+    --> choice 1
+    --> choice 2
+    --> choice 3
+    --> choice 4
+    --> answer index
 
     jobtest:VguiButton( 'Back', self, BOTTOM, function( ) self:Hide() parent.selector:Show() end )
 end

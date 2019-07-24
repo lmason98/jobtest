@@ -18,7 +18,13 @@ Desc: Creates a vgui button
 function jobtest:VguiButton( text, parent, dock, doClick )
     local btn = vgui.Create( 'DButton', parent )
     btn:SetTall( 30 )
-    btn:DockMargin( 10, 10, 10, 10 )
+
+    if ( dock == BOTTOM ) then
+        btn:DockMargin( 10, 0, 10, 10 )
+    else
+        btn:DockMargin( 10, 10, 10, 0 )
+    end
+
     btn:Dock( dock )
     btn:InvalidateParent( true )
     btn:SetText( text )
@@ -31,7 +37,6 @@ function jobtest:VguiButton( text, parent, dock, doClick )
             col = theme.btndown
             textCol = theme.textselected
         elseif ( btn:IsHovered() ) then
-            col = theme.main
             textCol = theme.textselected
         end
 
@@ -47,4 +52,11 @@ function jobtest:VguiButton( text, parent, dock, doClick )
 
     function btn:DoClick()
         doClick() end
+end
+
+--[[
+Args: 
+Desc:
+]]
+function jobtest:VguiTextForm( )
 end
