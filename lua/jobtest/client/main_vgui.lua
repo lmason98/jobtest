@@ -2,20 +2,20 @@
 Desc: Returns the enabled theme in the config file
 Return: Table theme
 ]]
-function jobtest:GetTheme( )
+function jobtest:VguiTheme( )
     for i, theme in pairs( jobtest.cfg.themes ) do
         if ( theme.enabled ) then
             return theme end
     end
 end
 
-local theme = jobtest:GetTheme()
+local theme = jobtest:VguiTheme()
 
 --[[
 Args: String text, DPanel parent, Number dock, Function doClick
 Desc: Creates a vgui button
 ]]
-function jobtest:CreateBtn( text, parent, dock, doClick )
+function jobtest:VguiButton( text, parent, dock, doClick )
     local btn = vgui.Create( 'DButton', parent )
     btn:SetTall( 30 )
     btn:DockMargin( 10, 10, 10, 10 )

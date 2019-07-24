@@ -1,5 +1,5 @@
-local SELECTIONPANEL = { }
 local EDITORPANEL = { }
+local SELECTIONPANEL = { }
 local FRAME = { }
 local theme -- initalized on frame init
 
@@ -15,7 +15,7 @@ function EDITORPANEL:Init( )
     self:InvalidateParent( true )
     self:Hide()
 
-    jobtest:CreateBtn( 'Back', self, BOTTOM, function( ) self:Hide() parent.selector:Show() end )
+    jobtest:VguiButton( 'Back', self, BOTTOM, function( ) self:Hide() parent.selector:Show() end )
 end
 
 function EDITORPANEL:Paint( w, h )
@@ -39,7 +39,7 @@ function SELECTIONPANEL:Init( )
     self:Dock( FILL )
     self:InvalidateParent( true )
 
-    jobtest:CreateBtn( 'Create New Test', self, TOP, function( ) self:Hide() parent.editor:Show() end )
+    jobtest:VguiButton( 'Create New Test', self, TOP, function( ) self:Hide() parent.editor:Show() end )
 end
 
 --[[
@@ -70,7 +70,7 @@ function FRAME:Init( )
     self:SetTitle( '' )
     self:MakePopup()
 
-    theme = jobtest:GetTheme()
+    theme = jobtest:VguiTheme()
 
     self.selector = vgui.Create( 'JobTestManagerSelectionPanel', self )
     self.editor = vgui.Create( 'JobTestManagerEditorPanel', self )
