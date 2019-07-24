@@ -55,8 +55,34 @@ function jobtest:VguiButton( text, parent, dock, doClick )
 end
 
 --[[
-Args: 
-Desc:
+Args: Strin text, DPanel parent, Function onEnter
+Desc: Creates a vgui text entry
 ]]
-function jobtest:VguiTextForm( )
+function jobtest:VguiTextEntry( text, parent, onEnter )
+    local txtEntry = vgui.Create( 'DTextEntry', parent )
+    txtEntry:SetTall( 30 )
+    txtEntry:DockMargin( 10, 10, 10, 0 )
+    txtEntry:Dock( TOP )
+    txtEntry:InvalidateParent( true )
+    txtEntry:SetText( text )
+    txtEntry:SetFont( 'jobtest_7' )
+
+    function txtEntry:Paint( w, h )
+        local col = theme.main
+
+        print( self:IsHovered() )
+        print( self:IsEditing() )
+
+        if ( self:IsHovered() ) then
+            col = theme.focused
+        elseif ( self:IsEditing() ) then
+            col = theme.btndown
+        end
+
+        surface.SetDrawColor( col )
+        surface.DrawRect( 0, 0, w, h )
+
+        surface.SetDrawColor( theme.outline )
+        surface.DrawOutlinedRect( 0, 0, w, h )
+    end
 end

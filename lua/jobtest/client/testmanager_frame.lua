@@ -1,7 +1,13 @@
+local QUESTONPANEL = { }
 local EDITORPANEL = { }
 local SELECTIONPANEL = { }
 local FRAME = { }
 local theme -- initalized on frame init
+
+--[[
+Desc: Get's the choice text for the question
+]]
+
 
 --[[
 Desc: Get's the job the test is intended for
@@ -35,11 +41,7 @@ function EDITORPANEL:Init( )
     --> test job
     self:JobForm()
     --> test name
-    --> choice 1
-    --> choice 2
-    --> choice 3
-    --> choice 4
-    --> answer index
+    jobtest:VguiTextEntry( 'Test Name', self, function( ) end )
 
     jobtest:VguiButton( 'Back', self, BOTTOM, function( ) self:Hide() parent.selector:Show() end )
 end
