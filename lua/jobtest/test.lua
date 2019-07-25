@@ -1,15 +1,17 @@
 local Test = { }
 
+AccessorFunc( Test, 'name', 'Name', FORCE_STRING )
 AccessorFunc( Test, 'questionCount', 'QuestionCount', FORCE_NUMBER )
 Test.questions = { }
 
 --[[
-Args: Table questions
+Args: String name, Table questions
 Desc: Test class constructor
 ]]
-function Test:New( questions )
+function Test:New( name, questions )
     local this = table.Copy( Test )
 
+    this:SetName( name )
     this.questions = questions
     this:SetQuestionCount( #questions )
 
@@ -24,8 +26,8 @@ function Test:GetQuestion( num )
     return this.questions[num] end
 
 --[[
-Args: Table questions
+Args: String name, Table questions
 Desc: Test class constructor global wrapper
 ]]
-function jobtest:Test( questions )
+function jobtest:Test( name, questions )
     return Test:New( questions ) end

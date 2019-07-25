@@ -1,35 +1,123 @@
-local QUESTONPANEL = { }
 local EDITORPANEL = { }
+local TESTCREATEPANEL = { }
 local SELECTIONPANEL = { }
 local FRAME = { }
 local theme -- initalized on frame init
 
 --[[
-Desc: Get's the choice text for the question
+Args: Table test
+Desc: Sets the current test being edited
 ]]
+function EDITORPANEL:SetTest( test )
 
+end
+
+--[[
+Desc: Initializes the test editor question form panel 
+]]
+function EDITORPANEL:Init( )
+    local parent = self:GetParent()
+
+    self:DockMargin( 0, 10, 0, 0 )
+    self:Dock( FILL )
+    self:InvalidateParent( true )
+    self:Hide()
+
+    self.testname = 'No Test To Edit'
+
+    jobtest:VguiButton( 'Back', self, BOTTOM, function( ) self:Hide() parent.testcreate:Show()
+        local test = jobtest:Test( '', { jobtest:Question( {
+            [1] = 'foo',
+            [2] = 'bar',
+        } ) } )
+
+        print( test )
+
+        -- table.insert( jobtest.tests, jobtest:Test( {
+    end )
+end
+
+--[[
+Args: Number w, Number h
+Desc: Draws the question editor panel
+]]
+function EDITORPANEL:Paint( w, h )
+    surface.SetDrawColor( theme.background )
+    surface.DrawRect( 0, 0, w, h )
+
+    surface.SetDrawColor( theme.outline )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+
+    draw.SimpleText( self.testname, 'jobtest_7b', w / 2, 10, theme.textselected,
+        TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+end
+
+vgui.Register( 'JobTestManagerEditorPanel', EDITORPANEL, 'DPanel' )
 
 --[[
 Desc: Get's the job the test is intended for
 ]]
-function EDITORPANEL:JobForm( )
+function TESTCREATEPANEL:JobForm( )
     self.job = vgui.Create( 'DComboBox', self )
     self.job:DockMargin( 10, 10, 10, 0 )
     self.job:Dock( TOP )
     self.job:InvalidateParent( true )
     self.job:SetTall( 30 )
     self.job:SetValue( 'Job' )
+    self.job:SetFont( 'jobtest_7' )
+    self.job:SetTextColor( theme.text )
+
+    local this = self.job
 
     for k, team in pairs( team.GetAllTeams() ) do
         if ( k > 0 and k < 1000 ) then
             self.job:AddChoice( team.Name ) end
     end
+
+    function self.job:Paint( w, h )
+        surface.SetDrawColor( theme.main )
+        surface.DrawRect( 0, 0, w, h )
+
+        surface.SetDrawColor( theme.outline )
+        surface.DrawOutlinedRect( 0, 0, w, h )
+    end
+
+    --> https://web.archive.org/web/20190407112054/https://forum.facepunch.com/gmoddev/ntlh/Help-painting-a-ComboBox/1/
+    function self.job:DoClick( )
+        if ( self:IsMenuOpen() ) then
+            self:CloseMenu() return end
+
+        self:OpenMenu()
+        
+        for k, choice in pairs( this.Menu:GetCanvas():GetChildren() ) do
+            function choice:PaintOver( w, h )
+                local col = theme.main
+                local textCol = theme.text
+
+                if ( self:IsDown() ) then
+                    col = theme.btndown
+                    textCol = theme.textselected
+                elseif ( self:IsHovered() ) then
+                    textCol = theme.textselected
+                end
+
+                surface.SetDrawColor( col )
+                surface.DrawRect( 0, 0, w, h )
+
+                surface.SetDrawColor( theme.outline )
+                surface.DrawOutlinedRect( 0, -1, w, h + 1 )
+
+                draw.SimpleText( self:GetValue(), 'jobtest_6', w / 2, ( h / 2 ) - 1 , textCol,
+                    TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+        end
+    end
 end
 
 --[[
-Desc: Initializes the text manager editor panel
+Desc: Initializes the test manager editor panel
 ]]
-function EDITORPANEL:Init( )
+function TESTCREATEPANEL:Init( )
     local parent = self:GetParent()
     local this = self
 
@@ -42,11 +130,16 @@ function EDITORPANEL:Init( )
     self:JobForm()
     --> test name
     jobtest:VguiTextEntry( 'Test Name', self, function( ) end )
+    jobtest:VguiButton( 'Create', self, TOP, function( ) self:Hide() parent.editor:Show() end )
 
     jobtest:VguiButton( 'Back', self, BOTTOM, function( ) self:Hide() parent.selector:Show() end )
 end
 
-function EDITORPANEL:Paint( w, h )
+--[[
+Args: Number w, Number h
+Desc: Draws the editor panel
+]]
+function TESTCREATEPANEL:Paint( w, h )
     surface.SetDrawColor( theme.background )
     surface.DrawRect( 0, 0, w, h )
 
@@ -54,7 +147,7 @@ function EDITORPANEL:Paint( w, h )
     surface.DrawOutlinedRect( 0, 0, w, h )
 end
 
-vgui.Register( 'JobTestManagerEditorPanel', EDITORPANEL, 'DPanel' )
+vgui.Register( 'JobTestManagerTestCreatePanel', TESTCREATEPANEL, 'DPanel' )
 
 --[[
 Desc: Initializes the test manager selection panel
@@ -67,7 +160,12 @@ function SELECTIONPANEL:Init( )
     self:Dock( FILL )
     self:InvalidateParent( true )
 
-    jobtest:VguiButton( 'Create New Test', self, TOP, function( ) self:Hide() parent.editor:Show() end )
+    jobtest:VguiButton( 'Create New Test', self, TOP, function( ) self:Hide() parent.testcreate:Show()
+        table.insert( jobtest.tests, jobtest:Test( 'Blank', { jobtest:Question( {
+            [1] = 'foo',
+            [2] = 'bar'
+        } ) } ) )
+    end )
 end
 
 --[[
@@ -101,6 +199,7 @@ function FRAME:Init( )
     theme = jobtest:VguiTheme()
 
     self.selector = vgui.Create( 'JobTestManagerSelectionPanel', self )
+    self.testcreate = vgui.Create( 'JobTestManagerTestCreatePanel', self )
     self.editor = vgui.Create( 'JobTestManagerEditorPanel', self )
 end
 

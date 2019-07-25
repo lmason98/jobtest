@@ -69,14 +69,13 @@ function jobtest:VguiTextEntry( text, parent, onEnter )
 
     function txtEntry:Paint( w, h )
         local col = theme.main
-
-        print( self:IsHovered() )
-        print( self:IsEditing() )
+        local textCol = theme.text
 
         if ( self:IsHovered() ) then
             col = theme.focused
         elseif ( self:IsEditing() ) then
             col = theme.btndown
+            textCol = theme.textselected
         end
 
         surface.SetDrawColor( col )
@@ -84,5 +83,10 @@ function jobtest:VguiTextEntry( text, parent, onEnter )
 
         surface.SetDrawColor( theme.outline )
         surface.DrawOutlinedRect( 0, 0, w, h )
+
+        self:DrawTextEntryText( textCol, Color( 255, 255, 255, 50 ), textCol )
     end
+
+    function txtEntry:OnEnter( )
+        onEnter() end
 end
