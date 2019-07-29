@@ -67,11 +67,17 @@ function TESTCREATEPANEL:JobForm( )
     self.job:SetFont( 'jobtest_7' )
     self.job:SetTextColor( theme.text )
 
-    local this = self.job
+    local this = self
+    local job = self.job
 
     for k, team in pairs( team.GetAllTeams() ) do
         if ( k > 0 and k < 1000 ) then
             self.job:AddChoice( team.Name ) end
+    end
+
+    function self.job:OnSelect( index, value )
+        if ( value ~= 'Job' ) then
+            this.jobval = value end
     end
 
     function self.job:Paint( w, h )
@@ -89,7 +95,7 @@ function TESTCREATEPANEL:JobForm( )
 
         self:OpenMenu()
         
-        for k, choice in pairs( this.Menu:GetCanvas():GetChildren() ) do
+        for k, choice in pairs( job.Menu:GetCanvas():GetChildren() ) do
             function choice:PaintOver( w, h )
                 local col = theme.main
                 local textCol = theme.text
@@ -129,10 +135,24 @@ function TESTCREATEPANEL:Init( )
     --> test job
     self:JobForm()
     --> test name
-    jobtest:VguiTextEntry( 'Test Name', self, function( ) end )
-    jobtest:VguiButton( 'Create', self, TOP, function( ) self:Hide() parent.editor:Show() end )
+    jobtest:VguiTextEntry( 'Test Name', self, function( val )
+        if ( val ~= '' and val ~= ' ' and val ~= 'Test Name' ) then
+            self.nameval = val end
+    end )
 
-    jobtest:VguiButton( 'Back', self, BOTTOM, function( ) self:Hide() parent.selector:Show() end )
+    jobtest:VguiButton( 'Create', self, TOP, function( )
+        local success = parent:NewCreatedTest( self.nameval, self.jobval )
+        
+        if ( success ) then
+            self:Hide()
+            parent.editor:Show()
+        end
+    end )
+
+    jobtest:VguiButton( 'Back', self, BOTTOM, function( )
+        self:Hide()
+        parent.selector:Show()
+    end )
 end
 
 --[[
@@ -160,11 +180,9 @@ function SELECTIONPANEL:Init( )
     self:Dock( FILL )
     self:InvalidateParent( true )
 
-    jobtest:VguiButton( 'Create New Test', self, TOP, function( ) self:Hide() parent.testcreate:Show()
-        table.insert( jobtest.tests, jobtest:Test( 'Blank', { jobtest:Question( {
-            [1] = 'foo',
-            [2] = 'bar'
-        } ) } ) )
+    jobtest:VguiButton( 'Create New Test', self, TOP, function( )
+        self:Hide()
+        parent.testcreate:Show()
     end )
 end
 
@@ -187,6 +205,23 @@ end
 vgui.Register( 'JobTestManagerSelectionPanel', SELECTIONPANEL, 'DPanel' )
 
 --[[
+Args: String name, String job
+Desc: Saves newly created test data
+Return: Bool success
+]]
+function FRAME:NewCreatedTest( name, job )
+    print( name, job )
+    if ( name and job and isstring( name ) and isstring( job ) ) then
+        self.createdtest.name = name
+        self.createdtest.job = job
+        return true
+    end
+
+    LocalPlayer():ChatPrint( 'You must include a name and a job.' )
+    return false
+end
+
+--[[
 Desc: Initializes the test manager frame
 ]]
 function FRAME:Init( )
@@ -197,6 +232,8 @@ function FRAME:Init( )
     self:MakePopup()
 
     theme = jobtest:VguiTheme()
+
+    self.createdtest = { }
 
     self.selector = vgui.Create( 'JobTestManagerSelectionPanel', self )
     self.testcreate = vgui.Create( 'JobTestManagerTestCreatePanel', self )

@@ -36,6 +36,12 @@ function Question:New( questionData, answerIndex )
 end
 
 --[[
+Desc: Sends the question data to the server to be saved
+]]
+function Question:Sync( )
+end
+
+--[[
 Args: Table questionData, (SERVER only) Number answerIndex
 Desc: question class constructor global wrapper
 ]]

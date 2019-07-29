@@ -19,6 +19,14 @@ function Test:New( name, questions )
 end
 
 --[[
+Desc: Sends the test data to the server to be saved
+]]
+function Test:Sync()
+    for i, q in pairs( self.questions ) do
+        q:Sync() end
+end
+
+--[[
 Args: Number num
 Desc: Returns the question at the passed index
 ]]

@@ -88,5 +88,5 @@ function jobtest:VguiTextEntry( text, parent, onEnter )
     end
 
     function txtEntry:OnEnter( )
-        onEnter() end
+        onEnter( txtEntry:GetValue() ) end
 end
