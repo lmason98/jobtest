@@ -14,6 +14,7 @@ local theme = jobtest:VguiTheme()
 --[[
 Args: String text, DPanel parent, Number dock, Function doClick
 Desc: Creates a vgui button
+Return: DButton btn
 ]]
 function jobtest:VguiButton( text, parent, dock, doClick )
     local btn = vgui.Create( 'DButton', parent )
@@ -52,6 +53,8 @@ function jobtest:VguiButton( text, parent, dock, doClick )
 
     function btn:DoClick()
         doClick() end
+
+    return btn
 end
 
 --[[

@@ -5,15 +5,52 @@ local FRAME = { }
 local theme -- initalized on frame init
 
 --[[
-Args: Table test
-Desc: Sets the current test being edited
+Args: Number i
+Desc: Creates a question form panel
+Return: DPanel qForm
 ]]
-function EDITORPANEL:SetTest( test )
+function EDITORPANEL:QuestionForm( i )
+    self.qForms[i] = vgui.Create( 'DPanel', self )
 
+    self.qForms[i]:DockMargin( 10, 10, 10, 0 )
+    self.qForms[i]:Dock( TOP )
+    self.qForms[i]:InvalidateParent( true )
+    self.qForms[i]:SetTall( 80 )
+
+    self.qForms[i].Paint = function( self, w, h )
+        surface.SetDrawColor( theme.main )
+        surface.DrawRect( 0, 0, w, h )
+
+        surface.SetDrawColor( theme.outline )
+        surface.DrawOutlinedRect( 0, 0, w, h )
+    end
+
+    return self.qForms[i]
 end
 
 --[[
-Desc: Initializes the test editor question form panel 
+Desc: Updates the editor panel's form
+]]
+function EDITORPANEL:Update( )
+    local parent = self:GetParent()
+
+    self.testname = parent.createdtest.name
+    self.jobname = parent.createdtest.job
+
+    for i, qForm in pairs( self.qForms ) do
+        qForm:Remove() end
+
+    -- handles question panels
+    for i, q in pairs( parent.createdtest.questions ) do
+        local qForm = self:QuestionForm( i, q )
+    end
+    self.backBtn:Remove()
+    self.backBtn = jobtest:VguiButton( 'Back', self:GetCanvas(), TOP, function( ) self:Hide() parent.testcreate:Show() end )
+    self.backBtn:DockMargin( 10, 10, 10, 10 )
+end
+
+--[[
+Desc: Initializes the test editor question form panel
 ]]
 function EDITORPANEL:Init( )
     local parent = self:GetParent()
@@ -23,18 +60,26 @@ function EDITORPANEL:Init( )
     self:InvalidateParent( true )
     self:Hide()
 
-    self.testname = 'No Test To Edit'
+    print( self:GetTall() )
 
-    jobtest:VguiButton( 'Back', self, BOTTOM, function( ) self:Hide() parent.testcreate:Show()
-        local test = jobtest:Test( '', { jobtest:Question( {
-            [1] = 'foo',
-            [2] = 'bar',
-        } ) } )
+    self.testname = 'No Chosen Name'
+    self.jobname = 'No Selected Job'
+    self.qForms = { }
 
-        print( test )
-
-        -- table.insert( jobtest.tests, jobtest:Test( {
+    jobtest:VguiButton( 'Add Question', self, TOP, function( )
+        table.insert( parent.createdtest.questions, {
+            [1] = 'Choice 1',
+            [2] = 'Choice 2',
+            [3] = 'Choice 3',
+            [4] = 'Choice 4',
+            text = 'Question text',
+            answer_index = 0
+        } )
+        PrintTable( parent.createdtest )
+        self:Update()
     end )
+    -- docking to TOP and making sure it's the last added child works better than docking to BOTTOM
+    self.backBtn = jobtest:VguiButton( 'Back', self:GetCanvas(), TOP, function( ) self:Hide() parent.testcreate:Show() end )
 end
 
 --[[
@@ -48,11 +93,13 @@ function EDITORPANEL:Paint( w, h )
     surface.SetDrawColor( theme.outline )
     surface.DrawOutlinedRect( 0, 0, w, h )
 
-    draw.SimpleText( self.testname, 'jobtest_7b', w / 2, 10, theme.textselected,
+    draw.SimpleText( self.testname, 'jobtest_7b', w / 4, 10, theme.textselected,
+        TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+    draw.SimpleText( self.jobname, 'jobtest_7b', w - ( w / 4 ), 10, theme.textselected,
         TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 end
 
-vgui.Register( 'JobTestManagerEditorPanel', EDITORPANEL, 'DPanel' )
+vgui.Register( 'JobTestManagerEditorPanel', EDITORPANEL, 'DScrollPanel' )
 
 --[[
 Desc: Get's the job the test is intended for
@@ -145,7 +192,9 @@ function TESTCREATEPANEL:Init( )
         
         if ( success ) then
             self:Hide()
+            parent.editor:Update()
             parent.editor:Show()
+            PrintTable( parent.createdtest )
         end
     end )
 
@@ -210,7 +259,6 @@ Desc: Saves newly created test data
 Return: Bool success
 ]]
 function FRAME:NewCreatedTest( name, job )
-    print( name, job )
     if ( name and job and isstring( name ) and isstring( job ) ) then
         self.createdtest.name = name
         self.createdtest.job = job
@@ -234,6 +282,7 @@ function FRAME:Init( )
     theme = jobtest:VguiTheme()
 
     self.createdtest = { }
+    self.createdtest.questions = { }
 
     self.selector = vgui.Create( 'JobTestManagerSelectionPanel', self )
     self.testcreate = vgui.Create( 'JobTestManagerTestCreatePanel', self )
