@@ -1,7 +1,7 @@
 jobtest.cfg = jobtest.cfg or
 {
     -- groups that can create/edit/remove tests and also add/remove saved npcs
-    caneditgroups = {
+    canEditGroups = {
         ['superadmin'] = true
     },
 
