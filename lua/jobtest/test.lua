@@ -11,9 +11,21 @@ Desc: Test class constructor
 function Test:New( name, questions )
     local this = table.Copy( Test )
 
-    this:SetName( name )
-    this.questions = questions
-    this:SetQuestionCount( #questions )
+    if ( name and isstring( name ) ) then
+        this:SetName( name )
+    else
+        this:SetName( 'Test' )
+    end
+
+    if ( questions and istable( questions ) and #questions >= 1 ) then
+        this.questions = questions
+        this:SetQuestionCount( #questions )
+    else
+        this.questions = { }
+        this:SetQuestionCount( 5 )
+        for i = 1, 5 do
+            this.questions[i] = jobtest:Question() end
+    end
 
     return this
 end
@@ -38,4 +50,4 @@ Args: String name, Table questions
 Desc: Test class constructor global wrapper
 ]]
 function jobtest:Test( name, questions )
-    return Test:New( questions ) end
+    return Test:New( name, questions ) end

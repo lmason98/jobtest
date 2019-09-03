@@ -1,5 +1,6 @@
 local Question = { }
 
+AccessorFunc( Question, 'question_str', 'QString', FORCE_STRING )
 AccessorFunc( Question, 'choice_count', 'ChoiceCount', FORCE_NUMBER )
 AccessorFunc( Question, 'chosen_index', 'ChosenIndex', FORCE_NUMBER )
 Question.choices = { }
@@ -8,28 +9,33 @@ if ( SERVER ) then
     AccessorFunc( Question, 'answer_index', 'AnswerIndex', FORCE_NUMBER ) end
 
 --[[
-Args: Table questionData, (SERVER only) Number answerIndex
+Args: String qString Table answerChoices, (SERVER only) Number answerIndex
 Desc: Question class constructor
 ]]
-function Question:New( questionData, answerIndex )
+function Question:New( qString, answerChoices, answerIndex )
     local this = table.Copy( Question )
 
-    --> TODO: Make max choices configurable
-    if ( SERVER and #questionData >= 2 and #questionData <= 4 and answerIndex and isnumber( answerIndex ) ) then
-        this:SetChoiceCount( #questionData )
-        this:SetChosenIndex( 0 )
-        for i = 1, this:GetChoiceCount() do
-            this.choices[i] = questionData[i] end
+    --TODO: Make max choices configurable
 
+    if ( qString and isstring( qString ) ) then
+        this:SetQString( qString )
+    else
+        this:SetQString( 'You stand atop a cliff, do you: ' )
+    end
+
+    if ( answerChoices and istable( answerChoices ) and #answerChoices >= 2 and #answerChoices <= 4 ) then
+        this.choices = answerChoices
+    else
+        this.choices = {
+            [1] = 'Do a frontflip off',
+            [2] = 'Do a backflip off'
+        }
+    end
+
+    if ( SERVER and answerIndex and isnumber( answerIndex ) ) then
         this:SetAnswerIndex( answerIndex )
-    elseif ( CLIENT and #questionData >= 2 and #questionData <= 4 ) then
-        this:SetChoiceCount( #questionData )
-        this:SetChosenIndex( 0 )
-        for i = 1, this:GetChoiceCount() do
-            this.choices[i] = questionData[i] end
     elseif ( SERVER ) then
-        print( ' [X] Jobtest: Invalid questionData.' )
-        return
+        this:SetAnswerIndex( 1 )
     end
 
     return this
@@ -42,8 +48,8 @@ function Question:Sync( )
 end
 
 --[[
-Args: Table questionData, (SERVER only) Number answerIndex
+Args: String qString, Table answerChoices, (SERVER only) Number answerIndex
 Desc: question class constructor global wrapper
 ]]
-function jobtest:Question( questionData, answerIndex )
-    return Question:New( questionData, answerIndex or nil ) end
+function jobtest:Question( qString, questionData, answerIndex )
+    return Question:New( qString, questionData, answerIndex ) end
