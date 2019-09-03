@@ -20,15 +20,17 @@ function Question:New( qString, answerChoices, answerIndex )
     if ( qString and isstring( qString ) ) then
         this:SetQString( qString )
     else
-        this:SetQString( 'You stand atop a cliff, do you: ' )
+        this:SetQString( 'You\'ve become the mayor, should you ... ' )
     end
 
     if ( answerChoices and istable( answerChoices ) and #answerChoices >= 2 and #answerChoices <= 4 ) then
         this.choices = answerChoices
     else
         this.choices = {
-            [1] = 'Do a frontflip off',
-            [2] = 'Do a backflip off'
+            [1] = '(A) Raise taxes to 100%.',
+            [2] = '(B) Drift around the city in the mayor\'s limo',
+            [3] = '(C) Steal the city funds',
+            [4] = '(D) Go and meet the city staff'
         }
     end
 

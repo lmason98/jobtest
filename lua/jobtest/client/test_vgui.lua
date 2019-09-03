@@ -5,6 +5,15 @@ local QPNL = { }
 --[[ Desc: Inits the question panel ]]
 function QPNL:Init( )
     local parent = self:GetParent()
+
+
+end
+
+--[[ Args: Question q
+     Desc: Set's the question of the panel
+]]
+function QPNL:SetQ( q )
+
 end
 
 --[[ Args: Number w, Number h 
@@ -36,7 +45,7 @@ function TESTPNL:Init( )
         self.qPnls[i]:Dock( TOP )
         self.qPnls[i]:DockMargin( 0, 0, 0, 5 )
         self.qPnls[i]:InvalidateParent( true )
-        self.qPnls[i]:SetTall( parent:GetTall() * ( 1 / 5 ) )
+        self.qPnls[i]:SetQ( question )
     end
 end
 vgui.Register( 'JobTestPanel', TESTPNL, 'DPanel' )
