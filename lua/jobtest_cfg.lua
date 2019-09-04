@@ -16,7 +16,7 @@ jobtest.cfg = jobtest.cfg or
             text = Color( 173, 173, 173, 255 ),
             textselected = Color( 201, 212, 201, 255 ),
         },
-        light = { 
+        light = {
             enabled = false,
         }
     },
