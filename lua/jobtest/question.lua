@@ -49,6 +49,13 @@ Desc: Sends the question data to the server to be saved
 function Question:Sync( )
 end
 
+--[[ Args: Number i 
+     Desc: Gets the question choice at the given index
+     Return: String choice
+]]
+function Question:GetChoice( i )
+    return self.choices[i] end
+
 --[[
 Args: String qString, Table answerChoices, (SERVER only) Number answerIndex
 Desc: question class constructor global wrapper
