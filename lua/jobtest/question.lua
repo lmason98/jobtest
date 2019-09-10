@@ -9,13 +9,11 @@ if ( SERVER ) then
     AccessorFunc( Question, 'answer_index', 'AnswerIndex', FORCE_NUMBER ) end
 
 --[[
-Args: String qString Table answerChoices, (SERVER only) Number answerIndex
-Desc: Question class constructor
+    Args: String qString Table answerChoices, (SERVER only) Number answerIndex
+    Desc: Question class constructor
 ]]
 function Question:New( qString, answerChoices, answerIndex )
     local this = table.Copy( Question )
-
-    --TODO: Make max choices configurable
 
     if ( qString and isstring( qString ) ) then
         this:SetQString( qString )
@@ -27,10 +25,10 @@ function Question:New( qString, answerChoices, answerIndex )
         this.choices = answerChoices
     else
         this.choices = {
-            [1] = '(A) Raise taxes to 100%.',
-            [2] = '(B) Drift around the city in the mayor\'s limo',
-            [3] = '(C) Steal the city funds',
-            [4] = '(D) Go and meet the city staff'
+            [1] = 'Raise taxes to 100%.',
+            [2] = 'Drift around the city in the mayor\'s limo. Drift around the city in the mayor\'s limo. Drift around the city in the mayor\'s limo. Drift around the city in the mayor\'s limo.',
+            [3] = 'Steal the city funds',
+            [4] = 'Go and meet the city staff'
         }
     end
 
@@ -44,21 +42,22 @@ function Question:New( qString, answerChoices, answerIndex )
 end
 
 --[[
-Desc: Sends the question data to the server to be saved
+    Desc: Sends the question data to the server to be saved
 ]]
 function Question:Sync( )
 end
 
---[[ Args: Number i 
-     Desc: Gets the question choice at the given index
-     Return: String choice
+--[[ 
+    Args: Number i 
+    Desc: Gets the question choice at the given index
+    Return: String choice
 ]]
 function Question:GetChoice( i )
     return self.choices[i] end
 
 --[[
-Args: String qString, Table answerChoices, (SERVER only) Number answerIndex
-Desc: question class constructor global wrapper
+    Args: String qString, Table answerChoices, (SERVER only) Number answerIndex
+    Desc: question class constructor global wrapper
 ]]
 function jobtest:Question( qString, questionData, answerIndex )
     return Question:New( qString, questionData, answerIndex ) end
