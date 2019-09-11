@@ -27,8 +27,8 @@ function Question:New( qString, answerChoices, answerIndex )
         this.choices = {
             [1] = 'Raise taxes to 100%.',
             [2] = 'Drift around the city in the mayor\'s limo. Drift around the city in the mayor\'s limo. Drift around the city in the mayor\'s limo. Drift around the city in the mayor\'s limo.',
-            [3] = 'Steal the city funds',
-            [4] = 'Go and meet the city staff'
+            [3] = 'Steal the city funds.',
+            [4] = 'Go and meet the city staff.'
         }
     end
 

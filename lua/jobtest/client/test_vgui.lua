@@ -4,7 +4,9 @@ local FRAME = { }
 local TESTPNL = { }
 local QPNL = { }
 
---[[ Desc: Inits the question panel ]]
+--[[
+    Desc: Inits the question panel
+]]
 function QPNL:Init( )
     self.p = 10
     self.btns = { }
@@ -13,16 +15,18 @@ function QPNL:Init( )
     self.font = 'jobtest_6'
 end
 
---[[ Args: Question q
-     Desc: Set's the question of the panel
+--[[ 
+    Args: Question q
+    Desc: Set's the question of the panel
 ]]
 function QPNL:SetQ( q )
     local parent = self:GetParent()
     local totalH = 0
     local _, textH = 0, 0
     self.q = q
+    self.radBtns = { }
 
-    --* Question text font
+    -- calculating panel height
     surface.SetFont( self.fontB )
     _, textH = surface.GetTextSize( q:GetQString() )
     totalH = textH + self.p
@@ -35,23 +39,35 @@ function QPNL:SetQ( q )
             self:GetWide() - self.p * 3 )
         local newLineCount = #fitStr:Split( '\n' )
 
-        totalH = totalH + textH * newLineCount + self.p --* 5 is padding
+        local radBtn = vgui.Create( 'DCheckBox', self )
+        radBtn:SetSize( ScreenScale( 5 ), ScreenScale( 5 ) )
+        radBtn:SetPos( self.p, totalH + self.p * 1.2 )
+
+        -- TODO: radBtn paint
+        -- radBtn.Paint = function( _, w, h )
+        -- end
+
+        -- radio btn functionality
+        radBtn.DoClick = function()
+            for i = 1, #self.radBtns do
+                self.radBtns[i]:SetValue( false ) end
+
+            self.selectedIndex = i
+            self.radBtns[i]:SetValue( true )
+        end
+
+        self.radBtns[i] = radBtn
+
+        totalH = totalH + ( textH * newLineCount ) + self.p --* 5 is padding
+
     end
 
     self:SetTall( totalH + self.p )
-
-    -- for i = 1, #q.choices do
-    --     local btn = vgui.Create( 'DButton', self )
-    --     btn:SetTall( textH )
-    --     btn:Dock( TOP )
-    --     btn:InvalidateParent( true )
-    --     btn:SetWide( 50 )
-    --     self.btns[i] = btn
-    -- end
 end
 
---[[ Args: Number w, Number h 
-     Desc: Paints the question panel
+--[[ 
+    Args: Number w, Number h 
+    Desc: Paints the question panel
 ]]
 function QPNL:Paint( w, h )
     surface.SetDrawColor( theme.main )
