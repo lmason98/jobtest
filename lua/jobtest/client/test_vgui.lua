@@ -82,7 +82,8 @@ function QPNL:Paint( w, h )
         surface.SetFont( self.fontB )
         local _, textH = surface.GetTextSize( self.q:GetQString() )
 
-        draw.SimpleText( self.q:GetQString(), self.fontB, self.p, yPos, theme.textSelected )
+        draw.SimpleText( self.q:GetQString(), self.fontB, self.p, yPos,
+            theme.textSelected )
         yPos = yPos + textH + self.p
 
         surface.SetFont( self.font )
