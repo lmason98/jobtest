@@ -91,9 +91,18 @@ function QPNL:Paint( w, h )
         local yPos = self.p
         local w = self:GetWide() - self.p * 3
 
+<<<<<<< HEAD
         draw.DrawText( DarkRP.textWrap( self.q:GetQString(), self.fontB, w ),
             self.fontB, self.p, yPos, theme.textSelected )
         yPos = yPos + jobtest:GetTextH( self.fontB, self.q:GetQString(), w ) + self.p
+=======
+        surface.SetFont( self.fontB )
+        local _, textH = surface.GetTextSize( self.q:GetQString() )
+
+        draw.SimpleText( self.q:GetQString(), self.fontB, self.p, yPos,
+            theme.textSelected )
+        yPos = yPos + textH + self.p
+>>>>>>> 2cb33f2c9edc5f7e05d42ef073d800fb9efbe542
 
         surface.SetFont( self.font )
         _, textH = surface.GetTextSize( self.q:GetChoice( 1 ) )
