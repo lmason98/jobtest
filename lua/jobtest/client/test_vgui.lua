@@ -26,26 +26,35 @@ function QPNL:SetQ( q )
     self.q = q
     self.radBtns = { }
 
-    -- calculating panel height
-    surface.SetFont( self.fontB )
-    _, textH = surface.GetTextSize( q:GetQString() )
-    totalH = textH + self.p
+    totalH = jobtest:GetTextH( self.fontB, q:GetQString(), self:GetWide() - self.p * 3 ) + self.p
 
     surface.SetFont( self.font )
 
     for i = 1, #q.choices do
-        _, textH = surface.GetTextSize( q:GetChoice( i ) )
-        local fitStr = DarkRP.textWrap( q:GetChoice( i ), self.font,
+        local textH = jobtest:GetTextH( self.font, q:GetChoice( i ),
             self:GetWide() - self.p * 3 )
-        local newLineCount = #fitStr:Split( '\n' )
 
         local radBtn = vgui.Create( 'DCheckBox', self )
         radBtn:SetSize( ScreenScale( 5 ), ScreenScale( 5 ) )
         radBtn:SetPos( self.p, totalH + self.p * 1.2 )
 
-        -- TODO: radBtn paint
-        -- radBtn.Paint = function( _, w, h )
-        -- end
+        radBtn.Paint = function( btn, w, h )
+            surface.SetDrawColor( theme.btn )
+            surface.DrawRect( 0, 0, w, h )
+
+            local selectedCol = theme.btn
+
+            if ( btn:GetChecked() ) then
+                selectedCol = theme.btndown
+            elseif ( btn:IsHovered() ) then
+                selectedCol = theme.focused
+            end
+
+            surface.SetDrawColor( selectedCol )
+            surface.DrawRect( 3, 3, w - 6, h - 6 )
+            surface.SetDrawColor( theme.outline )
+            surface.DrawOutlinedRect( 0, 0, w, h )
+        end
 
         -- radio btn functionality
         radBtn.DoClick = function()
@@ -54,14 +63,16 @@ function QPNL:SetQ( q )
 
             self.selectedIndex = i
             self.radBtns[i]:SetValue( true )
+            self.q:SetSelected( i )
         end
 
         self.radBtns[i] = radBtn
 
-        totalH = totalH + ( textH * newLineCount ) + self.p --* 5 is padding
-
+        totalH = totalH + textH + self.p --* 5 is padding
     end
 
+    self.origW = self:GetWide()
+    self.origH = totalH
     self:SetTall( totalH + self.p )
 end
 
@@ -78,12 +89,11 @@ function QPNL:Paint( w, h )
 
     if ( self.q ) then
         local yPos = self.p
+        local w = self:GetWide() - self.p * 3
 
-        surface.SetFont( self.fontB )
-        local _, textH = surface.GetTextSize( self.q:GetQString() )
-
-        draw.SimpleText( self.q:GetQString(), self.fontB, self.p, yPos, theme.textSelected )
-        yPos = yPos + textH + self.p
+        draw.DrawText( DarkRP.textWrap( self.q:GetQString(), self.fontB, w ),
+            self.fontB, self.p, yPos, theme.textSelected )
+        yPos = yPos + jobtest:GetTextH( self.fontB, self.q:GetQString(), w ) + self.p
 
         surface.SetFont( self.font )
         _, textH = surface.GetTextSize( self.q:GetChoice( 1 ) )
@@ -101,6 +111,27 @@ end
 
 vgui.Register( 'JobTestQuestionPanel', QPNL, 'DPanel' )
 
+function TESTPNL:BuildCompleteBtn( )
+    local base = vgui.Create( 'DPanel', self.scroll )
+    base:Dock( TOP )
+    base:InvalidateParent( true )
+    base:SetTall( self:GetParent():GetTall() / 10 )
+
+    -- hide the base panel
+    base.Paint = function() end
+
+    timer.Simple( 0, function()
+        local cmplt = jobtest:VguiButton( 'Complete', base, function()
+            if ( self:GetParent().test:IsComplete() ) then
+                -- TODO: self:GetParent().test:Evaluate() 
+                --* evaluate method will send test to server to be checked?
+            end
+        end )
+        cmplt:SetSize( base:GetWide() / 2.5, base:GetTall() * ( 2 / 3 ) )
+        cmplt:Center()
+    end )
+end
+
 --[[ Desc: Inits the test panel ]]
 function TESTPNL:Init( )
     local parent = self:GetParent()
@@ -116,15 +147,15 @@ function TESTPNL:Init( )
     end
 
     local sBar = self.scroll:GetVBar()
-    sBar:SetWide( sBar:GetWide() / 3 )
+    sBar:SetWide( sBar:GetWide() / 2 )
     sBar.Paint = function( _, w, h )
         surface.SetDrawColor( theme.background )
         surface.DrawRect( 0, 0, w, h )
     end
     sBar.btnGrip.Paint = function( _, w, h )
-        draw.RoundedBox( 8, 0, ScreenScale( 3 ),
+        draw.RoundedBox( 2, 0, ScreenScale( 4 ),
             w, h - ScreenScale( 6 ), theme.outline )
-        draw.RoundedBox( 8, 1, ScreenScale( 3 ) + 1,
+        draw.RoundedBox( 2, 1, ScreenScale( 4 ) + 1,
             w - 2, h - ScreenScale( 6 ) - 2, theme.main )
     end
     sBar.btnUp.Paint = function() end
@@ -139,6 +170,8 @@ function TESTPNL:Init( )
         self.qPnls[i]:InvalidateParent( true )
         timer.Simple( 0, function() self.qPnls[i]:SetQ( question ) end )
     end
+
+    self:BuildCompleteBtn()
 end
 vgui.Register( 'JobTestPanel', TESTPNL, 'DPanel' )
 

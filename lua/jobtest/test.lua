@@ -29,6 +29,19 @@ function Test:New( name, questions )
     return this
 end
 
+--[[
+    Desc: Checks if the test has been filled out
+    Return: Bool formComplete
+]]
+function Test:IsComplete( )
+    for _, q in pairs( self.questions ) do
+        if ( q:GetSelected() == -1 ) then
+            return false end
+    end
+
+    return true
+end
+
 --[[ Desc: Sends the test data to the server to be saved ]]
 function Test:Sync()
     for i, q in pairs( self.questions ) do

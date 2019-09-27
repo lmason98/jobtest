@@ -12,22 +12,40 @@ end
 local theme = jobtest:VguiTheme()
 
 --[[
-Args: String text, DPanel parent, Number dock, Function doClick
+    Args: String font, String str, Number maxW 
+    Desc: Gets the text height of a wrapped multi-line string
+    Return: Number textH
+]]
+function jobtest:GetTextH( font, str, maxW )
+    surface.SetFont( font )
+
+    local _, textH = surface.GetTextSize( str )
+    local fitStr = DarkRP.textWrap( str, font, maxW )
+    local newLCount = #fitStr:Split( '\n' )
+
+    return textH * newLCount
+end
+
+--[[
+Args: String text, DPanel parent, Function doClick, Number dock
 Desc: Creates a vgui button
 Return: DButton btn
 ]]
-function jobtest:VguiButton( text, parent, dock, doClick )
+function jobtest:VguiButton( text, parent, doClick, dock  )
     local btn = vgui.Create( 'DButton', parent )
     btn:SetTall( 30 )
 
-    if ( dock == BOTTOM ) then
-        btn:DockMargin( 10, 0, 10, 10 )
-    else
-        btn:DockMargin( 10, 10, 10, 0 )
+    if ( dock ) then
+        if ( dock == BOTTOM ) then
+            btn:DockMargin( 10, 0, 10, 10 )
+        else
+            btn:DockMargin( 10, 10, 10, 0 )
+        end
+
+        btn:Dock( dock )
+        btn:InvalidateParent( true )
     end
 
-    btn:Dock( dock )
-    btn:InvalidateParent( true )
     btn:SetText( text )
 
     function btn:PaintOver( w, h )

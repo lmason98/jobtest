@@ -2,7 +2,7 @@ local Question = { }
 
 AccessorFunc( Question, 'question_str', 'QString', FORCE_STRING )
 AccessorFunc( Question, 'choice_count', 'ChoiceCount', FORCE_NUMBER )
-AccessorFunc( Question, 'chosen_index', 'ChosenIndex', FORCE_NUMBER )
+AccessorFunc( Question, 'selected_index', 'Selected', FORCE_NUMBER )
 Question.choices = { }
 
 if ( SERVER ) then
@@ -18,7 +18,7 @@ function Question:New( qString, answerChoices, answerIndex )
     if ( qString and isstring( qString ) ) then
         this:SetQString( qString )
     else
-        this:SetQString( 'You\'ve become the mayor, should you ... ' )
+        this:SetQString( 'You\'ve become the mayor, should you ... You\'ve become the mayor, should you ... You\'ve become the mayor, should you ... You\'ve become the mayor, should you ... ' )
     end
 
     if ( answerChoices and istable( answerChoices ) and #answerChoices >= 2 and #answerChoices <= 4 ) then
@@ -37,6 +37,8 @@ function Question:New( qString, answerChoices, answerIndex )
     elseif ( SERVER ) then
         this:SetAnswerIndex( 1 )
     end
+
+    this:SetSelected( -1 )
 
     return this
 end
