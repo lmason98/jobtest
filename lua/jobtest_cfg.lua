@@ -10,12 +10,9 @@ jobtest.cfg = jobtest.cfg or
             enabled = true,
             outline = Color( 0, 0, 0, 255 ),
             main = Color( 37, 37, 37, 255 ),
-<<<<<<< HEAD
             background = Color( 30, 30, 30, 255 ),
             btn = Color( 25, 25, 25, 255 ),
-=======
             background = Color( 33, 33, 33, 255 ),
->>>>>>> 2cb33f2c9edc5f7e05d42ef073d800fb9efbe542
             focused = Color( 51, 51, 51, 255 ),
             btndown = Color( 65, 65, 65, 255 ),
             text = Color( 173, 173, 173, 255 ),
