@@ -111,3 +111,22 @@ function jobtest:VguiTextEntry( text, parent, onEnter )
     function txtEntry:OnEnter( )
         onEnter( txtEntry:GetValue() ) end
 end
+
+--[[
+    Args: DElement element, Number factor
+    Desc: Animates the derma element (grow shrink on hover)
+]]
+function jobtest:AnimateDElement( element, f )
+    local origX, origY = element:GetPos()
+    local origW, origH = element:GetSize()
+    local t = 0.1
+
+    element.OnCursorEntered = function( _ )
+        _:SizeTo( origW * f, origH * f, t )
+        _:MoveTo( origX - ( origW * ( f - 1 ) / 2 ), origY - ( origH * ( f - 1 ) / 2 ), t )
+    end
+    element.OnCursorExited = function( _ )
+        _:SizeTo( origW, origH, t )
+        _:MoveTo( origX, origY, t )
+    end
+end

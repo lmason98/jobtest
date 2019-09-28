@@ -13,7 +13,7 @@ function Test:New( name, questions )
     if ( name and isstring( name ) ) then
         this:SetName( name )
     else
-        this:SetName( 'Test' )
+        this:SetName( 'Default Test' )
     end
 
     if ( questions and istable( questions ) and #questions >= 1 ) then
@@ -40,6 +40,34 @@ function Test:IsComplete( )
     end
 
     return true
+end
+
+--[[ 
+    Args: (SERVER only) Table selected
+    Desc: Sends the test info to the server to be evaluated
+    Return: (SERVER only) Bool passedTest
+]]
+function Test:Evaluate( selected )
+    if ( SERVER ) then
+        for i, q in pairs( self.questions ) do
+            print( 'answer index: ' .. q:GetAnswerIndex() )
+            print( 'selected index: ' .. selected[i] )
+            if ( q:GetAnswerIndex() ~= selected[i] ) then
+                return false end
+        end
+
+        return true
+    elseif ( CLIENT ) then
+        local selected = { }
+
+        for i, q in pairs( self.questions ) do
+            selected[i] = q:GetSelected() end
+
+        net.Start( 'jobtest_validate_test' )
+            net.WriteString( self:GetName() )
+            net.WriteTable( selected )
+        net.SendToServer()
+    end
 end
 
 --[[ Desc: Sends the test data to the server to be saved ]]

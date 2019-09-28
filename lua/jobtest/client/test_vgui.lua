@@ -91,18 +91,9 @@ function QPNL:Paint( w, h )
         local yPos = self.p
         local w = self:GetWide() - self.p * 3
 
-<<<<<<< HEAD
         draw.DrawText( DarkRP.textWrap( self.q:GetQString(), self.fontB, w ),
             self.fontB, self.p, yPos, theme.textSelected )
         yPos = yPos + jobtest:GetTextH( self.fontB, self.q:GetQString(), w ) + self.p
-=======
-        surface.SetFont( self.fontB )
-        local _, textH = surface.GetTextSize( self.q:GetQString() )
-
-        draw.SimpleText( self.q:GetQString(), self.fontB, self.p, yPos,
-            theme.textSelected )
-        yPos = yPos + textH + self.p
->>>>>>> 2cb33f2c9edc5f7e05d42ef073d800fb9efbe542
 
         surface.SetFont( self.font )
         _, textH = surface.GetTextSize( self.q:GetChoice( 1 ) )
@@ -132,12 +123,12 @@ function TESTPNL:BuildCompleteBtn( )
     timer.Simple( 0, function()
         local cmplt = jobtest:VguiButton( 'Complete', base, function()
             if ( self:GetParent().test:IsComplete() ) then
-                -- TODO: self:GetParent().test:Evaluate() 
-                --* evaluate method will send test to server to be checked?
+                self:GetParent().test:Evaluate()
             end
         end )
         cmplt:SetSize( base:GetWide() / 2.5, base:GetTall() * ( 2 / 3 ) )
         cmplt:Center()
+        jobtest:AnimateDElement( cmplt, 5 / 4 )
     end )
 end
 
@@ -194,7 +185,7 @@ function FRAME:Init( )
     self:DockPadding( 5, ScreenScale( 15 ), 5, 5 )
     self:InvalidateLayout( true )
 
-    self.test = jobtest:Test( )
+    self.test = jobtest:Test()
 
     self.testpnl = vgui.Create( 'JobTestPanel', self )
     self.testpnl:Dock( FILL )
