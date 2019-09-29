@@ -11,8 +11,8 @@ function QPNL:Init( )
     self.p = 10
     self.btns = { }
     self.selectedIndex = 0
-    self.fontB = 'jobtest_8b'
-    self.font = 'jobtest_6'
+    self.fontB = 'jobtest_10b'
+    self.font = 'jobtest_9'
 end
 
 --[[ 
@@ -26,7 +26,8 @@ function QPNL:SetQ( q )
     self.q = q
     self.radBtns = { }
 
-    totalH = jobtest:GetTextH( self.fontB, q:GetQString(), self:GetWide() - self.p * 3 ) + self.p
+    totalH = jobtest:GetTextH( self.fontB, q:GetQString(),
+        self:GetWide() - self.p * 3 ) + self.p
 
     surface.SetFont( self.font )
 
@@ -37,6 +38,7 @@ function QPNL:SetQ( q )
         local radBtn = vgui.Create( 'DCheckBox', self )
         radBtn:SetSize( ScreenScale( 5 ), ScreenScale( 5 ) )
         radBtn:SetPos( self.p, totalH + self.p * 1.2 )
+        jobtest:AnimateDElement( radBtn, 3 / 2 )
 
         radBtn.Paint = function( btn, w, h )
             surface.SetDrawColor( theme.btn )
@@ -91,9 +93,10 @@ function QPNL:Paint( w, h )
         local yPos = self.p
         local w = self:GetWide() - self.p * 3
 
-        draw.DrawText( DarkRP.textWrap( self.q:GetQString(), self.fontB, w ),
-            self.fontB, self.p, yPos, theme.textSelected )
-        yPos = yPos + jobtest:GetTextH( self.fontB, self.q:GetQString(), w ) + self.p
+        draw.DrawText( DarkRP.textWrap( self.q:GetQString(), self.fontB,
+            w ), self.fontB, self.p, yPos, theme.textSelected )
+        yPos = yPos + jobtest:GetTextH( self.fontB, self.q:GetQString(),
+            w ) + self.p
 
         surface.SetFont( self.font )
         _, textH = surface.GetTextSize( self.q:GetChoice( 1 ) )
@@ -177,8 +180,8 @@ vgui.Register( 'JobTestPanel', TESTPNL, 'DPanel' )
 
 --[[ Desc: Inits the test frame ]]
 function FRAME:Init( )
-    self:SetWide( ScrW() * ( 1 / 3 ) )
-    self:SetTall( ScrH() * ( 3 / 4 ) )
+    self:SetWide( ScrW() * ( 1 / 2 ) )
+    self:SetTall( ScrH() * ( 4 / 5 ) )
     self:Center()
     self:MakePopup()
     self:SetTitle( 'Jobtest' )

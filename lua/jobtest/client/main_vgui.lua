@@ -23,7 +23,7 @@ function jobtest:GetTextH( font, str, maxW )
     local fitStr = DarkRP.textWrap( str, font, maxW )
     local newLCount = #fitStr:Split( '\n' )
 
-    return textH * newLCount
+    return textH * newLCount + ( 2.5 * newLCount )
 end
 
 --[[
@@ -46,6 +46,8 @@ function jobtest:VguiButton( text, parent, doClick, dock  )
         btn:InvalidateParent( true )
     end
 
+    btn._font = 'jobtest_10b'
+
     btn:SetText( text )
 
     function btn:PaintOver( w, h )
@@ -65,7 +67,7 @@ function jobtest:VguiButton( text, parent, doClick, dock  )
         surface.SetDrawColor( theme.outline )
         surface.DrawOutlinedRect( 0, 0, w, h )
 
-        draw.SimpleText( self:GetText(), 'jobtest_7b', w / 2, h / 2, textCol,
+        draw.SimpleText( self:GetText(), self._font, w / 2, h / 2, textCol,
             TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
@@ -105,7 +107,8 @@ function jobtest:VguiTextEntry( text, parent, onEnter )
         surface.SetDrawColor( theme.outline )
         surface.DrawOutlinedRect( 0, 0, w, h )
 
-        self:DrawTextEntryText( textCol, Color( 255, 255, 255, 50 ), textCol )
+        self:DrawTextEntryText( textCol, Color( 255, 255, 255, 50 ),
+            textCol )
     end
 
     function txtEntry:OnEnter( )
@@ -113,20 +116,21 @@ function jobtest:VguiTextEntry( text, parent, onEnter )
 end
 
 --[[
-    Args: DElement element, Number factor
+    Args: DElement element, Number factor, Function cbEnter, cbExit
     Desc: Animates the derma element (grow shrink on hover)
 ]]
-function jobtest:AnimateDElement( element, f )
+function jobtest:AnimateDElement( element, f, cbEnter, cbExit )
     local origX, origY = element:GetPos()
     local origW, origH = element:GetSize()
     local t = 0.1
 
     element.OnCursorEntered = function( _ )
-        _:SizeTo( origW * f, origH * f, t )
-        _:MoveTo( origX - ( origW * ( f - 1 ) / 2 ), origY - ( origH * ( f - 1 ) / 2 ), t )
+        _:SizeTo( origW * f, origH * f, t, 0, -1, cbEnter )
+        _:MoveTo( origX - ( origW * ( f - 1 ) / 2 ),
+            origY - ( origH * ( f - 1 ) / 2 ), t )
     end
     element.OnCursorExited = function( _ )
-        _:SizeTo( origW, origH, t )
+        _:SizeTo( origW, origH, t, 0, -1, cbExit )
         _:MoveTo( origX, origY, t )
     end
 end
