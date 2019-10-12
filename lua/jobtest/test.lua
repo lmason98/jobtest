@@ -58,7 +58,7 @@ function Test:Evaluate( selected )
 
         return true
     elseif ( CLIENT ) then
-        local selected = { }
+        selected = { }
 
         for i, q in pairs( self.questions ) do
             selected[i] = q:GetSelected() end

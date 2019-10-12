@@ -8,7 +8,7 @@ local QPNL = { }
     Desc: Inits the question panel
 ]]
 function QPNL:Init( )
-    self.p = 10
+    self.p = ScreenScale( 5 )
     self.btns = { }
     self.selectedIndex = 0
     self.fontB = 'jobtest_10b'
@@ -21,23 +21,25 @@ end
 ]]
 function QPNL:SetQ( q )
     local parent = self:GetParent()
-    local totalH = 0
+    local yPos = self.p 
     local _, textH = 0, 0
     self.q = q
     self.radBtns = { }
 
-    totalH = jobtest:GetTextH( self.fontB, q:GetQString(),
-        self:GetWide() - self.p * 3 ) + self.p
+    yPos = yPos + jobtest:GetTextH( self.fontB, q:GetQString(),
+        self:GetWide() - self.p * 3 )
 
     surface.SetFont( self.font )
+    _, textH = surface.GetTextSize( self.q:GetChoice( 1 ) )
 
     for i = 1, #q.choices do
-        local textH = jobtest:GetTextH( self.font, q:GetChoice( i ),
+        local txt = DarkRP.textWrap( self.q:GetChoice( i ), self.font,
             self:GetWide() - self.p * 3 )
+        local newLineCount = #txt:Split( '\n' )
 
         local radBtn = vgui.Create( 'DCheckBox', self )
-        radBtn:SetSize( ScreenScale( 5 ), ScreenScale( 5 ) )
-        radBtn:SetPos( self.p, totalH + self.p * 1.2 )
+        radBtn:SetSize( ScreenScale( 6 ), ScreenScale( 6 ) )
+        radBtn:SetPos( self.p, yPos + self.p + ScreenScale( 1 ) )
         jobtest:AnimateDElement( radBtn, 3 / 2 )
 
         radBtn.Paint = function( btn, w, h )
@@ -70,12 +72,12 @@ function QPNL:SetQ( q )
 
         self.radBtns[i] = radBtn
 
-        totalH = totalH + textH + self.p --* 5 is padding
+        yPos = yPos + textH * newLineCount + self.p
     end
 
     self.origW = self:GetWide()
-    self.origH = totalH
-    self:SetTall( totalH + self.p )
+    self.origH = yPos 
+    self:SetTall( yPos + self.p )
 end
 
 --[[ 
@@ -98,6 +100,8 @@ function QPNL:Paint( w, h )
         yPos = yPos + jobtest:GetTextH( self.fontB, self.q:GetQString(),
             w ) + self.p
 
+        -- print( 'yPos: ' .. yPos )
+
         surface.SetFont( self.font )
         _, textH = surface.GetTextSize( self.q:GetChoice( 1 ) )
 
@@ -108,6 +112,7 @@ function QPNL:Paint( w, h )
 
             draw.DrawText( txt, self.font, self.p * 3, yPos, theme.text )
             yPos = yPos + textH * newLineCount + self.p
+            -- print( 'yPos: ' .. yPos )
         end
     end
 end
@@ -115,6 +120,7 @@ end
 vgui.Register( 'JobTestQuestionPanel', QPNL, 'DPanel' )
 
 function TESTPNL:BuildCompleteBtn( )
+    local parent = self:GetParent()
     local base = vgui.Create( 'DPanel', self.scroll )
     base:Dock( TOP )
     base:InvalidateParent( true )
@@ -123,6 +129,7 @@ function TESTPNL:BuildCompleteBtn( )
     -- hide the base panel
     base.Paint = function() end
 
+    -- makes sure we have correct dimensions after docking
     timer.Simple( 0, function()
         local cmplt = jobtest:VguiButton( 'Complete', base, function()
             if ( self:GetParent().test:IsComplete() ) then
@@ -132,6 +139,10 @@ function TESTPNL:BuildCompleteBtn( )
         cmplt:SetSize( base:GetWide() / 2.5, base:GetTall() * ( 2 / 3 ) )
         cmplt:Center()
         jobtest:AnimateDElement( cmplt, 5 / 4 )
+
+        cmplt.DoClick = function( self )
+            parent.test:Evaluate()
+        end
     end )
 end
 
@@ -184,11 +195,12 @@ function FRAME:Init( )
     self:SetTall( ScrH() * ( 4 / 5 ) )
     self:Center()
     self:MakePopup()
-    self:SetTitle( 'Jobtest' )
-    self:DockPadding( 5, ScreenScale( 15 ), 5, 5 )
+    self:SetTitle( '' )
+    self:DockPadding( 5, ScreenScale( 18 ), 5, 5 )
     self:InvalidateLayout( true )
 
     self.test = jobtest:Test()
+    self.pad = ScreenScale( 5 )
 
     self.testpnl = vgui.Create( 'JobTestPanel', self )
     self.testpnl:Dock( FILL )
@@ -205,6 +217,9 @@ function FRAME:GetQs( )
 function FRAME:Paint( w, h )
     surface.SetDrawColor( theme.background )
     surface.DrawRect( 0, 0, w, h )
+
+    draw.SimpleText( self.test:GetName(), 'jobtest_11b', self.pad, self.pad,
+        Color( 255, 255, 255 ) )
 end
 
 vgui.Register( 'JobTestFrame', FRAME, 'DFrame' )

@@ -78,7 +78,7 @@ function jobtest:VguiButton( text, parent, doClick, dock  )
 end
 
 --[[
-Args: Strin text, DPanel parent, Function onEnter
+Args: String text, DPanel parent, Function onEnter
 Desc: Creates a vgui text entry
 ]]
 function jobtest:VguiTextEntry( text, parent, onEnter )
@@ -122,15 +122,34 @@ end
 function jobtest:AnimateDElement( element, f, cbEnter, cbExit )
     local origX, origY = element:GetPos()
     local origW, origH = element:GetSize()
-    local t = 0.1
+    local t = 0.15
 
-    element.OnCursorEntered = function( _ )
-        _:SizeTo( origW * f, origH * f, t, 0, -1, cbEnter )
-        _:MoveTo( origX - ( origW * ( f - 1 ) / 2 ),
-            origY - ( origH * ( f - 1 ) / 2 ), t )
+    local justMoved = false
+    local cursorIn = false
+    element.OnCursorEntered = function( ele )
+        cursorIn = true
+        if ( not justMoved ) then
+            ele:SizeTo( origW * f, origH * f, t, 0, -1, cbEnter )
+            ele:MoveTo( origX - ( origW * ( f - 1 ) / 2 ),
+                origY - ( origH * ( f - 1 ) / 2 ), t )
+
+            justMoved = true
+            timer.Simple( t, function()
+                justMoved = false
+                if ( not cursorIn ) then
+                    ele:OnCursorExited()
+                end
+            end )
+        end
     end
-    element.OnCursorExited = function( _ )
-        _:SizeTo( origW, origH, t, 0, -1, cbExit )
-        _:MoveTo( origX, origY, t )
+    element.OnCursorExited = function( ele )
+        cursorIn = false
+        if ( not justMoved ) then
+            ele:SizeTo( origW, origH, t, 0, -1, cbExit )
+            ele:MoveTo( origX, origY, t )
+
+            justMoved = true
+            timer.Simple( t, function() justMoved = false end )
+        end
     end
 end
