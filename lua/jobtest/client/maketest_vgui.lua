@@ -1,16 +1,145 @@
 local theme = jobtest:VguiTheme()
 
+local TOPPANEL = { }
+local TOGGELPANEL = { }
 local FRAME = { }
+
+--[[
+    Desc: Inits the top panel
+]]--
+function TOPPANEL:Init( )
+    local parent = self:GetParent()
+
+    self:Dock( TOP )
+    self:InvalidateParent( true )
+    self:SetTall( parent:GetTall() / 8 )
+
+    timer.Simple( 0, function()
+        local closeBtn = vgui.Create( 'DButton', self )
+        closeBtn:SetSize( ScreenScale( 6 ), ScreenScale( 6 ) )
+        closeBtn:SetPos( self:GetWide() - closeBtn:GetWide() - parent.pad,
+            closeBtn:GetTall() )
+        closeBtn:SetText( 'X' )
+
+        closeBtn.DoClick = function( self )
+            parent:Remove()
+        end
+        
+
+        jobtest:AnimateDElement( closeBtn, 3 / 2 )
+    end )
+end
+
+--[[
+    Desc: Paints the top panel
+    Args: Number w, Number h
+]]
+function TOPPANEL:Paint( w, h )
+    surface.SetDrawColor( theme.background )
+    surface.DrawRect( 0, 0, w, h )
+
+    surface.SetDrawColor( theme.outline )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+end
+
+vgui.Register( 'JobTestCreateTopPanel', TOPPANEL, 'DPanel' )
+
+--[[
+    Desc: Inits the toggel panel
+]]
+function TOGGELPANEL:Init( )
+    local parent = self:GetParent()
+    local this = self
+
+    self:Dock( LEFT )
+    self:InvalidateParent( true )
+    self:SetWide( parent:GetWide() / 5 )
+
+    timer.Simple( 0, function()
+        self._in = false
+        self.scrX, self.scrY = self:ScreenToLocal( 0, 0 )
+        print( self.scrX, self.scrY )
+        self.toX = self:GetWide() * ( 7 / 8 )
+
+        local moveBtn = vgui.Create( 'DButton', self )
+        moveBtn:SetSize( self:GetWide() / 10, self:GetTall() / 10 )
+        moveBtn:SetPos( self:GetWide() - moveBtn:GetWide() - parent.pad,
+            self:GetTall() / 2 - moveBtn:GetTall() / 2 )
+        moveBtn:SetText( '' )
+
+        moveBtn.txt = '<'
+        moveBtn.Paint = function( self, w, h )
+            draw.SimpleText( self.txt, 'jobtest_11b', w / 2, h / 2, theme.text,
+                TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+
+        moveBtn.DoClick = function( self )
+            this._in = not this._in
+
+            if ( this._in ) then
+                this:Out()
+            else
+                this:In()
+            end
+        end
+    end )
+
+    local bsPnl = vgui.Create( 'DPanel', parent )
+    bsPnl:Dock( FILL )
+    bsPnl:InvalidateParent( true )
+
+    bsPnl.Paint = function( self, w, h )
+        surface.SetDrawColor( 100, 100, 100, 255 )
+        surface.DrawRect( 0, 0, w, h )
+    end
+end
+
+--[[
+    Desc: Moves the toggel panel in
+]]
+function TOGGELPANEL:In( )
+    self:MoveTo( self.scrX - self.toX, 0, 1 )
+end
+
+--[[
+    Desc: Moves the toggel panel out 
+]]
+function TOGGELPANEL:Out( )
+    self:MoveTo( self.scrX + self.toX, 0, 1 )
+end
+
+--[[
+    Desc: Paints the top panel
+    Args: Number w, Number h
+]]
+function TOGGELPANEL:Paint( w, h )
+    surface.SetDrawColor( theme.background )
+    surface.DrawRect( 0, 0, w, h )
+
+    surface.SetDrawColor( theme.outline )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+    -- hide the top line
+    surface.SetDrawColor( theme.background )
+    surface.DrawLine( 1, 0, w-1, 0 )
+end
+
+vgui.Register( 'JobTestCreateToggelPanel', TOGGELPANEL, 'DPanel' )
 
 --[[
     Desc: Inits the frame
 ]]
 function FRAME:Init( )
-    self:SetWide( ScrW() * ( 1 / 2 ) )
+    self:SetWide( ScrW() * ( 2 / 3 ) )
     self:SetTall( ScrH() * ( 4 / 5 ) )
     self:Center()
     self:MakePopup()
+    self:ShowCloseButton( false )
     self:SetTitle( '' )
+    self:DockPadding( 0, 0, 0, 0 )
+    self.pad = ScreenScale( 3 ) 
+
+    vgui.Create( 'JobTestCreateTopPanel', self )
+    vgui.Create( 'JobTestCreateToggelPanel', self )
 end
 
 --[[
@@ -18,8 +147,11 @@ end
     Args: Number w, Number h
 ]]
 function FRAME:Paint( w, h )
-    surface.SetDrawColor( theme.background )
+    surface.SetDrawColor( theme.main )
     surface.DrawRect( 0, 0, w, h )
+
+    surface.SetDrawColor( theme.outline )
+    surface.DrawOutlinedRect( 0, 0, w, h )
 end
 
 vgui.Register( 'JobTestCreateFrame', FRAME, 'DFrame' )

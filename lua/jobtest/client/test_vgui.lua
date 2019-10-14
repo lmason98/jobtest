@@ -211,7 +211,6 @@ function FRAME:Init( )
 
     self.test = jobtest:Test()
     self.pad = ScreenScale( 5 )
-
 end
 
 --[[ Return: Table testQs ]]
@@ -226,10 +225,16 @@ function FRAME:Paint( w, h )
     surface.SetDrawColor( theme.background )
     surface.DrawRect( 0, 0, w, h )
 
+    surface.SetDrawColor( theme.outline )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+
     draw.SimpleText( self.test:GetName(), 'jobtest_11b', self.pad, self.pad,
         theme.text )
 end
 
 vgui.Register( 'JobTestFrame', FRAME, 'DFrame' )
 
-concommand.Add( 'jobtestframe', function() vgui.Create( 'JobTestFrame' ) end )
+concommand.Add( 'jobtestframe', function()
+    local frame = vgui.Create( 'JobTestFrame' )
+    frame:SetTest( jobtest:Test() )
+end )

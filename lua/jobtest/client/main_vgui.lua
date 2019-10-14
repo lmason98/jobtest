@@ -1,6 +1,6 @@
 --[[
-Desc: Returns the enabled theme in the config file
-Return: Table theme
+    Desc: Returns the enabled theme in the config file
+    Return: Table theme
 ]]
 function jobtest:VguiTheme( )
     for i, theme in pairs( jobtest.cfg.themes ) do
@@ -27,9 +27,9 @@ function jobtest:GetTextH( font, str, maxW )
 end
 
 --[[
-Args: String text, DPanel parent, Function doClick, Number dock
-Desc: Creates a vgui button
-Return: DButton btn
+    Args: String text, DPanel parent, Function doClick, Number dock
+    Desc: Creates a vgui button
+    Return: DButton btn
 ]]
 function jobtest:VguiButton( text, parent, doClick, dock  )
     local btn = vgui.Create( 'DButton', parent )
@@ -78,8 +78,8 @@ function jobtest:VguiButton( text, parent, doClick, dock  )
 end
 
 --[[
-Args: String text, DPanel parent, Function onEnter
-Desc: Creates a vgui text entry
+    Args: String text, DPanel parent, Function onEnter
+    Desc: Creates a vgui text entry
 ]]
 function jobtest:VguiTextEntry( text, parent, onEnter )
     local txtEntry = vgui.Create( 'DTextEntry', parent )
