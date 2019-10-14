@@ -1,11 +1,44 @@
 local theme = jobtest:VguiTheme()
 
 local TOPPANEL = { }
-local TOGGELPANEL = { }
+local TOGGLEPANEL = { }
 local FRAME = { }
+local EDITTESTPANEL = { }
+local CREATETESTPANEL = { }
+local REMOVETESTPANEL = { }
+
 
 --[[
-    Desc: Inits the top panel
+Desc: Inits the edit test panel
+]]
+function EDITTESTPANEL:Init( )
+    self.name = 'Edit Test'
+end
+
+vgui.Register( 'JobTestEditTestPanel', EDITTESTPANEL, 'DPanel' )
+
+--[[
+Desc: Inits the create test panel
+]]
+function CREATETESTPANEL:Init( )
+    self:Hide()
+    self.name = 'Create Test'
+end
+
+vgui.Register( 'JobTestCreateTestPanel', CREATETESTPANEL, 'DPanel' )
+
+--[[
+Desc: Inits the remove test panel
+]]
+function REMOVETESTPANEL:Init( )
+    self:Hide()
+    self.name = 'Remove Test'
+end
+
+vgui.Register( 'JobTestRemoveTestPanel', REMOVETESTPANEL, 'DPanel' )
+
+--[[
+Desc: Inits the top panel
 ]]--
 function TOPPANEL:Init( )
     local parent = self:GetParent()
@@ -30,8 +63,8 @@ function TOPPANEL:Init( )
 end
 
 --[[
-    Desc: Paints the top panel
-    Args: Number w, Number h
+Desc: Paints the top panel
+Args: Number w, Number h
 ]]
 function TOPPANEL:Paint( w, h )
     surface.SetDrawColor( theme.background )
@@ -44,9 +77,9 @@ end
 vgui.Register( 'JobTestCreateTopPanel', TOPPANEL, 'DPanel' )
 
 --[[
-    Desc: Inits the toggel panel
+Desc: Inits the toggel panel
 ]]
-function TOGGELPANEL:Init( )
+function TOGGLEPANEL:Init( )
     local parent = self:GetParent()
     local this = self
 
@@ -55,13 +88,39 @@ function TOGGELPANEL:Init( )
     self:SetWide( parent:GetWide() / 5 )
     self.origW = self:GetWide()
 
-    local bsPnl = vgui.Create( 'DPanel', parent )
-    bsPnl:Dock( FILL )
-    bsPnl:InvalidateParent( true )
+    self.pnls = { 
+        edit_test = vgui.Create( 'JobTestEditTestPanel', parent ), -- open on init
+        create_test = vgui.Create( 'JobTestCreateTestPanel', parent ), -- hidden on init
+        remove_test = vgui.Create( 'JobTestRemoveTestPanel', parent ) -- hidden on init
+    }
 
-    bsPnl.Paint = function( self, w, h )
-        surface.SetDrawColor( 100, 100, 100, 255 )
-        surface.DrawRect( 0, 0, w, h )
+    for _, pnl in pairs( self.pnls ) do
+        pnl:Dock( FILL )
+        pnl:InvalidateLayout( true )
+
+        pnl.Paint = function( self, w, h )
+            surface.SetDrawColor( theme.main )
+            surface.DrawRect( 0, 0, w, h )
+
+            draw.SimpleText( pnl.name, 'jobtest_10b', w / 2, parent.pad, theme.text,
+                TEXT_ALIGN_CENTER )
+        end
+        -- pnl:Populate()
+    end
+
+    self.btns = { }
+    self.btns.edit_test = jobtest:VguiButton( 'Edit Test', self, TOP, true, function()
+        self:Toggle( 'edit_test' )
+    end )
+    self.btns.create_test = jobtest:VguiButton( 'Create Test', self, TOP, true, function()
+        self:Toggle( 'create_test' )
+    end )
+    self.btns.remove_test = jobtest:VguiButton( 'Remove Test', self, TOP, true, function()
+        self:Toggle( 'remove_test' )
+    end )
+    
+    for _, btn in pairs( self.btns ) do
+        btn:SetTall( self:GetTall() / 8 )
     end
 
     timer.Simple( 0, function()
@@ -79,27 +138,55 @@ function TOGGELPANEL:Init( )
                 TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
 
-        moveBtn.DoClick = function( self )
-            if ( this._in ) then
-                moveBtn.txt = '<'
-                this:SizeTo( this.origW, -1, 0.6 )
-                moveBtn:MoveTo( this.origW - moveBtn:GetWide() - parent.pad, moveBtn.y, 0.6 )
-            else
-                moveBtn.txt = '>'
-                this:SizeTo( this:GetWide() / 7, -1, 0.6 )
-                moveBtn:MoveTo( parent.pad, moveBtn.y, 0.6 )
-            end
+        self.inW = self:GetWide() / 7 
 
-            this._in = not this._in
+        moveBtn.DoClick = function( self )
+            local t = 0.6
+            if ( this._in ) then
+                this:SizeTo( this.origW, -1, t, 0, -1, function() moveBtn.txt = '<' end )
+                moveBtn:MoveTo( this.origW - moveBtn:GetWide() - parent.pad, moveBtn.y, t )
+
+                for _, btn in pairs( this.btns ) do
+                    btn:Show() end
+
+                if ( not parent.open_pnl ) then this._in = not this._in return end
+                -- resize children of focussed panel
+                for _, child in pairs( parent.open_pnl:GetChildren() ) do
+                    child:SizeTo( child:GetWide() - this.origW, -1, t ) end
+            else
+                this:SizeTo( this.inW, -1, t, 0, -1, function() 
+                    for _, btn in pairs( this.btns ) do
+                        btn:Hide() end
+                    moveBtn.txt = '>'
+                end )
+                moveBtn:MoveTo( parent.pad, moveBtn.y, t )
+
+                if ( not parent.open_pnl ) then this._in = not this._in return end
+                -- resize children of focussed panel
+                for _, child in pairs( parent.open_pnl:GetChildren() ) do
+                    child:SizeTo( child:GetWide() + this.origW, -1, t ) end
+            end
         end
     end )
 end
 
 --[[
+Desc: Toggles the panel at given index
+Args: String i
+]]
+function TOGGLEPANEL:Toggle( i )
+    for _, pnl in pairs( self.pnls ) do
+        pnl:Hide() end
+
+    self.pnls[i]:Show()
+end
+
+
+--[[
     Desc: Paints the top panel
     Args: Number w, Number h
 ]]
-function TOGGELPANEL:Paint( w, h )
+function TOGGLEPANEL:Paint( w, h )
     surface.SetDrawColor( theme.background )
     surface.DrawRect( 0, 0, w, h )
 
@@ -110,7 +197,7 @@ function TOGGELPANEL:Paint( w, h )
     surface.DrawLine( 1, 0, w-1, 0 )
 end
 
-vgui.Register( 'JobTestCreateToggelPanel', TOGGELPANEL, 'DPanel' )
+vgui.Register( 'JobTestCreateToggelPanel', TOGGLEPANEL, 'DPanel' )
 
 --[[
     Desc: Inits the frame
@@ -124,6 +211,7 @@ function FRAME:Init( )
     self:SetTitle( '' )
     self:DockPadding( 0, 0, 0, 0 )
     self.pad = ScreenScale( 3 ) 
+    self.open_pnl = nil
 
     self.top_pnl = vgui.Create( 'JobTestCreateTopPanel', self )
     self.toggle_pnl = vgui.Create( 'JobTestCreateToggelPanel', self )

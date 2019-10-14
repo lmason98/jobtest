@@ -1,6 +1,6 @@
 --[[
-    Desc: Returns the enabled theme in the config file
-    Return: Table theme
+Desc: Returns the enabled theme in the config file
+Return: Table theme
 ]]
 function jobtest:VguiTheme( )
     for i, theme in pairs( jobtest.cfg.themes ) do
@@ -12,9 +12,9 @@ end
 local theme = jobtest:VguiTheme()
 
 --[[
-    Args: String font, String str, Number maxW 
-    Desc: Gets the text height of a wrapped multi-line string
-    Return: Number textH
+Args: String font, String str, Number maxW 
+Desc: Gets the text height of a wrapped multi-line string
+Return: Number textH
 ]]
 function jobtest:GetTextH( font, str, maxW )
     surface.SetFont( font )
@@ -27,37 +27,38 @@ function jobtest:GetTextH( font, str, maxW )
 end
 
 --[[
-    Args: String text, DPanel parent, Function doClick, Number dock
-    Desc: Creates a vgui button
-    Return: DButton btn
+Args: String text, DPanel parent, Number dock, Bool hideTopOutline, Function doClick
+Desc: Creates a vgui button
+Return: DButton btn
 ]]
-function jobtest:VguiButton( text, parent, doClick, dock  )
+function jobtest:VguiButton( text, parent, dock, hideTopOutline, doClick  )
     local btn = vgui.Create( 'DButton', parent )
     btn:SetTall( 30 )
 
     if ( dock ) then
-        if ( dock == BOTTOM ) then
-            btn:DockMargin( 10, 0, 10, 10 )
-        else
-            btn:DockMargin( 10, 10, 10, 0 )
-        end
+        -- if ( dock == BOTTOM ) then
+        --     btn:DockMargin( 10, 0, 10, 10 )
+        -- else
+        --     btn:DockMargin( 10, 10, 10, 0 )
+        -- end
 
         btn:Dock( dock )
         btn:InvalidateParent( true )
     end
 
-    btn._font = 'jobtest_10b'
+    btn._font = 'jobtest_9b'
 
     btn:SetText( text )
 
     function btn:PaintOver( w, h )
-        local col = theme.main
+        local col = theme.btn
         local textCol = theme.text
 
         if ( btn:IsDown() ) then
             col = theme.btndown
             textCol = theme.textSelected
         elseif ( btn:IsHovered() ) then
+            col = theme.focused
             textCol = theme.textSelected
         end
 
@@ -66,6 +67,11 @@ function jobtest:VguiButton( text, parent, doClick, dock  )
 
         surface.SetDrawColor( theme.outline )
         surface.DrawOutlinedRect( 0, 0, w, h )
+
+        if ( hideTopOutline ) then
+            surface.SetDrawColor( col )
+            surface.DrawLine( 1, 0, self:GetWide() - 1, 0 )
+        end
 
         draw.SimpleText( self:GetText(), self._font, w / 2, h / 2, textCol,
             TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -78,8 +84,8 @@ function jobtest:VguiButton( text, parent, doClick, dock  )
 end
 
 --[[
-    Args: String text, DPanel parent, Function onEnter
-    Desc: Creates a vgui text entry
+Args: String text, DPanel parent, Function onEnter
+Desc: Creates a vgui text entry
 ]]
 function jobtest:VguiTextEntry( text, parent, onEnter )
     local txtEntry = vgui.Create( 'DTextEntry', parent )
@@ -116,8 +122,8 @@ function jobtest:VguiTextEntry( text, parent, onEnter )
 end
 
 --[[
-    Args: DElement element, Number factor, Function cbEnter, cbExit
-    Desc: Animates the derma element (grow shrink on hover)
+Args: DElement element, Number factor, Function cbEnter, cbExit
+Desc: Animates the derma element (grow shrink on hover)
 ]]
 function jobtest:AnimateDElement( element, f, cbEnter, cbExit )
     local origX, origY = element:GetPos()
