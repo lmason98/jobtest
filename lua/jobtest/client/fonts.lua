@@ -18,6 +18,7 @@ local function createFont( name, scale, bold )
     } )
 end
 
+createFont( 'jobtest', 12, true )
 createFont( 'jobtest', 11, true )
 createFont( 'jobtest', 10, true )
 createFont( 'jobtest', 9, true )

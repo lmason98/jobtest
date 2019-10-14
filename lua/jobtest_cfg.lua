@@ -7,7 +7,7 @@ jobtest.cfg = jobtest.cfg or
 
     themes = {
         dark = {
-            enabled = false,
+            enabled = true,
             outline = Color( 0, 0, 0, 255 ),
             main = Color( 37, 37, 37, 255 ),
             background = Color( 30, 30, 30, 255 ),
@@ -18,15 +18,15 @@ jobtest.cfg = jobtest.cfg or
             textSelected = Color( 201, 212, 201, 255 ),
         },
         light = {
-            enabled = true,
+            enabled = false,
             outline = Color( 150, 150, 150, 255 ),
             main = Color( 255, 255, 255, 255 ),
             background = Color( 240, 240, 240, 255 ),
             btn = Color( 240, 240, 240, 255 ),
             focused = Color( 195, 195, 195, 255 ),
             btndown = Color( 165, 165, 165, 255 ),
-            text = Color( 0, 0, 0, 255 ),
-            textSelected = Color( 25, 25, 25, 255 ),
+            text = Color( 25, 25, 25, 255 ),
+            textSelected = Color( 0, 0, 0, 255 ),
         }
     },
 }

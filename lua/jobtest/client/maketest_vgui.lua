@@ -67,11 +67,16 @@ Desc: Paints the top panel
 Args: Number w, Number h
 ]]
 function TOPPANEL:Paint( w, h )
+    local pad = self:GetTall() / 2 
+
     surface.SetDrawColor( theme.background )
     surface.DrawRect( 0, 0, w, h )
 
     surface.SetDrawColor( theme.outline )
     surface.DrawOutlinedRect( 0, 0, w, h )
+
+    draw.SimpleText( 'Jobtest Config', 'jobtest_11b', pad, pad, theme.text,
+        TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 end
 
 vgui.Register( 'JobTestCreateTopPanel', TOPPANEL, 'DPanel' )
