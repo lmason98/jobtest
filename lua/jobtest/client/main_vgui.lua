@@ -56,9 +56,9 @@ function jobtest:VguiButton( text, parent, doClick, dock  )
 
         if ( btn:IsDown() ) then
             col = theme.btndown
-            textCol = theme.textselected
+            textCol = theme.textSelected
         elseif ( btn:IsHovered() ) then
-            textCol = theme.textselected
+            textCol = theme.textSelected
         end
 
         surface.SetDrawColor( col )
