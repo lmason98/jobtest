@@ -189,6 +189,16 @@ function TESTPNL:Init( )
 end
 vgui.Register( 'JobTestPanel', TESTPNL, 'DPanel' )
 
+--[[
+    Desc: Sets the test of the frame
+    Args: Test test
+]]--
+function FRAME:SetTest( test )
+    self.test = test
+    self.testpnl = vgui.Create( 'JobTestPanel', self )
+    self.testpnl:Dock( FILL )
+end
+
 --[[ Desc: Inits the test frame ]]
 function FRAME:Init( )
     self:SetWide( ScrW() * ( 1 / 2 ) )
@@ -201,9 +211,6 @@ function FRAME:Init( )
 
     self.test = jobtest:Test()
     self.pad = ScreenScale( 5 )
-
-    self.testpnl = vgui.Create( 'JobTestPanel', self )
-    self.testpnl:Dock( FILL )
 end
 
 --[[ Return: Table testQs ]]
@@ -218,10 +225,16 @@ function FRAME:Paint( w, h )
     surface.SetDrawColor( theme.background )
     surface.DrawRect( 0, 0, w, h )
 
+    surface.SetDrawColor( theme.outline )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+
     draw.SimpleText( self.test:GetName(), 'jobtest_11b', self.pad, self.pad,
-        Color( 255, 255, 255 ) )
+        theme.text )
 end
 
 vgui.Register( 'JobTestFrame', FRAME, 'DFrame' )
 
-concommand.Add( 'jobtestframe', function() vgui.Create( 'JobTestFrame' ) end )
+concommand.Add( 'jobtestframe', function()
+    local frame = vgui.Create( 'JobTestFrame' )
+    frame:SetTest( jobtest:Test() )
+end )
