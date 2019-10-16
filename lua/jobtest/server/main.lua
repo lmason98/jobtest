@@ -1,4 +1,4 @@
-util.AddNetworkString( 'jobtest_validate_test' )
+util.AddNetworkString 'jobtest_validate_test'
 
 local defaultTest = jobtest:Test()
 
@@ -6,9 +6,9 @@ jobtest.tests = { }
 jobtest.tests[1] = defaultTest
 
 --[[ 
-    Args: String name
-    Desc: Fetches the test given the name if it exists, false otherwise
-    Return: Test test or Bool false
+Args: String name
+Desc: Fetches the test given the name if it exists, returns false otherwise
+Return: Test test or Bool false
 ]]
 function jobtest:GetTest( name )
     for _, t in pairs( self.tests ) do
@@ -20,8 +20,8 @@ function jobtest:GetTest( name )
 end
 
 --[[
-    Args: Number len, Player ply
-    Desc: Checks if the selected test answers are correct
+Args: Number len, Player ply
+Desc: Checks if the selected test answers are correct
 ]]
 local function validateTest( len, ply )
     local name = net.ReadString()

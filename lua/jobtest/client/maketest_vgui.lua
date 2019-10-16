@@ -21,8 +21,92 @@ vgui.Register( 'JobTestEditTestPanel', EDITTESTPANEL, 'DPanel' )
 Desc: Inits the create test panel
 ]]
 function CREATETESTPANEL:Init( )
+    local parent = self:GetParent()
     self:Hide()
     self.name = 'Create Test'
+    self.forms = {}
+
+    local testName = jobtest:VguiTextEntry( 'test name:', self, function( self )
+        print( self:GetValue() ) end )
+
+    local newQ = jobtest:VguiButton( 'Add Question', self, TOP, false, function( ) 
+        self:CreateQPnl()
+    end )
+    newQ:DockMargin( parent.pad, parent.pad, parent.pad, parent.pad )
+    newQ._font = 'jobtest_7b'
+
+    local complete = jobtest:VguiButton( 'Complete', self, BOTTOM, false, function( )
+        -- add form validation here
+        -- have to write method on Test class to save created tests
+    end )
+    complete:Dock( BOTTOM )
+    complete:DockMargin( parent.pad, parent.pad, parent.pad, parent.pad ) 
+
+    self.qForm = vgui.Create( 'DScrollPanel', self )
+    self.qForm:Dock( FILL )
+    self.qForm:GetCanvas():DockPadding( 0, parent.pad, 0, parent.pad )
+    self.qForm:InvalidateParent( true )
+    self.qForm.Paint = function( self, w, h )
+        surface.SetDrawColor( theme.outline )
+        surface.DrawLine( 0, 0, w, 0 )
+        surface.DrawLine( 0, h-1, w, h-1 )
+    end
+
+    local sBar = self.qForm:GetVBar()
+    sBar:SetWide( sBar:GetWide() * ( 2 / 3 ) )
+    sBar.Paint = function( _, w, h )
+        surface.SetDrawColor( theme.main )
+        surface.DrawRect( 0, 0, w, h )
+        surface.SetDrawColor( theme.outline )
+        surface.DrawLine( 0, 0, w, 0 )
+        surface.DrawLine( 0, h-1, w, h-1 )
+    end
+    sBar.btnGrip.Paint = function( _, w, h )
+        w = w * ( 3 / 5 )
+        draw.RoundedBox( 4, 0, ScreenScale( 4 ),
+            w, h - ScreenScale( 6 ), theme.outline )
+        draw.RoundedBox( 4, 1, ScreenScale( 4 ) + 1,
+            w - 2, h - ScreenScale( 6 ) - 2, theme.background )
+    end
+    sBar.btnUp.Paint = function() end
+    sBar.btnDown.Paint = function() end
+end
+
+--[[
+Desc: Creates a question form panel
+Return: DPanel pnl
+]]
+function CREATETESTPANEL:CreateQPnl( )
+    local parent = self:GetParent()
+    local pnl = vgui.Create( 'DPanel', self.qForm:GetCanvas() )    
+    pnl:Dock( TOP )
+    pnl:DockMargin( parent.pad, 0, parent.pad, parent.pad ) 
+    pnl:InvalidateParent( true )
+    pnl:SetTall( pnl:GetTall() * ScreenScale( 4 ) ) 
+    pnl.Paint = function() end
+
+    local form = {
+        [1] = { text='Question text:', numeric=false, data=nil },
+        [2] = { text='Choice 1 text:', numeric=false, data=nil },
+        [3] = { text='Choice 2 text:', numeric=false, data=nil },
+        [4] = { text='Choice 3 text:', numeric=false, data=nil },
+        [5] = { text='Choice 4 text:', numeric=false, data=nil },
+        [6] = { text='Correct Choice Number:', numeric=true, data=nil }
+    }
+
+    for _, formEle in SortedPairs( form ) do
+        print(_)
+        local pnl, tEntry = jobtest:VguiTextEntry( formEle.text, pnl, function( self )
+            formEle.data = self:GetValue() end ) -- data = text on enter        
+
+        pnl:DockMargin( 0, 0, 0, parent.pad )
+        tEntry:SetNumeric( formEle.numeric )
+    end
+
+    local removeQ = jobtest:VguiButton( 'Remove Question', pnl, TOP, false, function( self )
+        pnl:Remove()
+    end )
+    removeQ:DockMargin( 0, 0, 0, parent.pad )
 end
 
 vgui.Register( 'JobTestCreateTestPanel', CREATETESTPANEL, 'DPanel' )
@@ -208,8 +292,8 @@ vgui.Register( 'JobTestCreateToggelPanel', TOGGLEPANEL, 'DPanel' )
     Desc: Inits the frame
 ]]
 function FRAME:Init( )
-    self:SetWide( ScrW() * ( 2 / 3 ) )
-    self:SetTall( ScrH() * ( 4 / 5 ) )
+    self:SetWide( ScrW() * ( 1 / 2 ) )
+    self:SetTall( ScrH() * ( 3 / 4 ) )
     self:Center()
     self:MakePopup()
     self:ShowCloseButton( false )

@@ -12,18 +12,30 @@ end
 local theme = jobtest:VguiTheme()
 
 --[[
-Args: String font, String str, Number maxW 
+Args: String text, String font, Number maxW 
 Desc: Gets the text height of a wrapped multi-line string
 Return: Number textH
 ]]
-function jobtest:GetTextH( font, str, maxW )
+function jobtest:GetTextH( text, font, maxW )
     surface.SetFont( font )
 
-    local _, textH = surface.GetTextSize( str )
-    local fitStr = DarkRP.textWrap( str, font, maxW )
+    local _, textH = surface.GetTextSize( text )
+    local fitStr = DarkRP.textWrap( text, font, maxW )
     local newLCount = #fitStr:Split( '\n' )
 
     return textH * newLCount + ( 2.5 * newLCount )
+end
+
+--[[
+Args: String text, String font 
+Desc: Gets the length in pixels of the text
+Return: Number textW
+]]
+function jobtest:GetTextW( text, font )
+    surface.SetFont( font )
+    local w, h = surface.GetTextSize( text )
+
+    return w
 end
 
 --[[
@@ -85,26 +97,42 @@ end
 
 --[[
 Args: String text, DPanel parent, Function onEnter
-Desc: Creates a vgui text entry
+Desc: Creates a vgui text entry accompanied by a dlabel
+Return: DPanel pnl, DTextEntry tEntry, (tEntry parented to pnl)
 ]]
 function jobtest:VguiTextEntry( text, parent, onEnter )
-    local txtEntry = vgui.Create( 'DTextEntry', parent )
-    txtEntry:SetTall( 30 )
-    txtEntry:DockMargin( 10, 10, 10, 0 )
-    txtEntry:Dock( TOP )
-    txtEntry:InvalidateParent( true )
-    txtEntry:SetText( text )
-    txtEntry:SetFont( 'jobtest_7' )
+    local pad = ScreenScale( 3 )
 
-    function txtEntry:Paint( w, h )
-        local col = theme.main
-        local textCol = theme.text
+    local pnl = vgui.Create( 'DPanel', parent )
+    pnl:Dock( TOP )
+    pnl:DockMargin( 10, 10, 10, 0 )
+    pnl:SetTall( ScreenScale( 10 ) )
 
-        if ( self:IsHovered() ) then
-            col = theme.focused
-        elseif ( self:IsEditing() ) then
+    local lbl = vgui.Create( 'DLabel', pnl )
+    lbl:Dock( LEFT )
+    lbl:SetWide( jobtest:GetTextW( text, 'jobtest_7b' ) + pad ) 
+    lbl:SetText( '' )
+
+    lbl.Paint = function( self, w, h )
+        surface.SetDrawColor( theme.main )
+        surface.DrawRect( 0, 0, w, h )
+
+        draw.SimpleText( text, 'jobtest_7b', 0, h / 2, theme.text,
+            TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+    end
+
+    local tEntry = vgui.Create( 'DTextEntry', pnl )
+    tEntry:Dock( FILL )
+    tEntry:SetText( '' )
+    tEntry:SetFont( 'jobtest_7' )
+
+    tEntry.Paint = function( self, w, h )
+        local col = theme.btn
+
+        if ( self:IsEditing() ) then
             col = theme.btndown
-            textCol = theme.textselected
+        elseif ( self:IsHovered() ) then
+            col = theme.focused
         end
 
         surface.SetDrawColor( col )
@@ -113,12 +141,13 @@ function jobtest:VguiTextEntry( text, parent, onEnter )
         surface.SetDrawColor( theme.outline )
         surface.DrawOutlinedRect( 0, 0, w, h )
 
-        self:DrawTextEntryText( textCol, Color( 255, 255, 255, 50 ),
-            textCol )
+        self:DrawTextEntryText( theme.text, Color( 255, 255, 255, 50 ),
+            theme.text )
     end
 
-    function txtEntry:OnEnter( )
-        onEnter( txtEntry:GetValue() ) end
+    tEntry.OnEnter = onEnter
+
+    return pnl, tEntry
 end
 
 --[[

@@ -4,8 +4,9 @@ AccessorFunc( Test, 'name', 'Name', FORCE_STRING )
 AccessorFunc( Test, 'questionCount', 'QuestionCount', FORCE_NUMBER )
 Test.questions = { }
 
---[[ Args: String name, Table questions
-     Desc: Test class constructor
+--[[
+Args: String name, Table questions
+Desc: Test class constructor
 ]]
 function Test:New( name, questions )
     local this = table.Copy( Test )
@@ -30,8 +31,8 @@ function Test:New( name, questions )
 end
 
 --[[
-    Desc: Checks if the test has been filled out
-    Return: Bool formComplete
+Desc: Checks if the test has been filled out
+Return: Bool formComplete
 ]]
 function Test:IsComplete( )
     for _, q in pairs( self.questions ) do
@@ -43,15 +44,14 @@ function Test:IsComplete( )
 end
 
 --[[ 
-    Args: (SERVER only) Table selected
-    Desc: Sends the test info to the server to be evaluated
-    Return: (SERVER only) Bool passedTest
+Args: (SERVER only) Table selected
+Desc (SERVER): Receives test info and checks if the test was passed or failed
+     (CLIENT): Sends the test info to the server to be evaluated  
+Return: (SERVER only) Bool passedTest
 ]]
 function Test:Evaluate( selected )
     if ( SERVER ) then
         for i, q in pairs( self.questions ) do
-            print( 'answer index: ' .. q:GetAnswerIndex() )
-            print( 'selected index: ' .. selected[i] )
             if ( q:GetAnswerIndex() ~= selected[i] ) then
                 return false end
         end
@@ -70,20 +70,24 @@ function Test:Evaluate( selected )
     end
 end
 
---[[ Desc: Sends the test data to the server to be saved ]]
+--[[
+Desc: Sends the test data to the server to be saved
+]]
 function Test:Sync()
     for i, q in pairs( self.questions ) do
         q:Sync() end
 end
 
---[[ Args: Number num
-     Desc: Returns the question at the passed index
+--[[
+Args: Number num
+Desc: Returns the question at the passed index
 ]]
 function Test:GetQuestion( num )
     return this.questions[num] end
 
---[[ Args: String name, Table questions
-     Desc: Test class constructor global wrapper
+--[[
+Args: String name, Table questions
+Desc: Test class constructor global wrapper
 ]]
 function jobtest:Test( name, questions )
     return Test:New( name, questions ) end

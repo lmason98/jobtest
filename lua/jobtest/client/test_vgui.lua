@@ -5,7 +5,7 @@ local TESTPNL = { }
 local QPNL = { }
 
 --[[
-    Desc: Inits the question panel
+Desc: Inits the question panel
 ]]
 function QPNL:Init( )
     self.p = ScreenScale( 5 )
@@ -16,8 +16,8 @@ function QPNL:Init( )
 end
 
 --[[ 
-    Args: Question q
-    Desc: Set's the question of the panel
+Args: Question q
+Desc: Set's the question of the panel
 ]]
 function QPNL:SetQ( q )
     local parent = self:GetParent()
@@ -26,7 +26,7 @@ function QPNL:SetQ( q )
     self.q = q
     self.radBtns = { }
 
-    yPos = yPos + jobtest:GetTextH( self.fontB, q:GetQString(),
+    yPos = yPos + jobtest:GetTextH( q:GetQString(), self.fontB,
         self:GetWide() - self.p * 3 )
 
     surface.SetFont( self.font )
@@ -81,8 +81,8 @@ function QPNL:SetQ( q )
 end
 
 --[[ 
-    Args: Number w, Number h 
-    Desc: Paints the question panel
+Args: Number w, Number h 
+Desc: Paints the question panel
 ]]
 function QPNL:Paint( w, h )
     surface.SetDrawColor( theme.main )
@@ -97,7 +97,7 @@ function QPNL:Paint( w, h )
 
         draw.DrawText( DarkRP.textWrap( self.q:GetQString(), self.fontB,
             w ), self.fontB, self.p, yPos, theme.textSelected )
-        yPos = yPos + jobtest:GetTextH( self.fontB, self.q:GetQString(),
+        yPos = yPos + jobtest:GetTextH( self.q:GetQString(), self.fontB,
             w ) + self.p
 
         -- print( 'yPos: ' .. yPos )
@@ -119,6 +119,9 @@ end
 
 vgui.Register( 'JobTestQuestionPanel', QPNL, 'DPanel' )
 
+--[[
+Desc: Builds the test complete button
+]]
 function TESTPNL:BuildCompleteBtn( )
     local parent = self:GetParent()
     local base = vgui.Create( 'DPanel', self.scroll )
@@ -131,7 +134,7 @@ function TESTPNL:BuildCompleteBtn( )
 
     -- makes sure we have correct dimensions after docking
     timer.Simple( 0, function()
-        local cmplt = jobtest:VguiButton( 'Complete', base, function()
+        local cmplt = jobtest:VguiButton( 'Complete', base, false, false, function()
             if ( self:GetParent().test:IsComplete() ) then
                 self:GetParent().test:Evaluate()
             end
@@ -146,7 +149,9 @@ function TESTPNL:BuildCompleteBtn( )
     end )
 end
 
---[[ Desc: Inits the test panel ]]
+--[[
+Desc: Inits the test panel
+]]
 function TESTPNL:Init( )
     local parent = self:GetParent()
 
@@ -190,8 +195,8 @@ end
 vgui.Register( 'JobTestPanel', TESTPNL, 'DPanel' )
 
 --[[
-    Desc: Sets the test of the frame
-    Args: Test test
+Desc: Sets the test of the frame
+Args: Test test
 ]]--
 function FRAME:SetTest( test )
     self.test = test
@@ -199,7 +204,9 @@ function FRAME:SetTest( test )
     self.testpnl:Dock( FILL )
 end
 
---[[ Desc: Inits the test frame ]]
+--[[
+Desc: Inits the test frame
+]]
 function FRAME:Init( )
     self:SetWide( ScrW() * ( 1 / 2 ) )
     self:SetTall( ScrH() * ( 4 / 5 ) )
@@ -213,13 +220,15 @@ function FRAME:Init( )
     self.pad = ScreenScale( 5 )
 end
 
---[[ Return: Table testQs ]]
+--[[
+Return: Table testQs
+]]
 function FRAME:GetQs( )
    return self.test.questions end
 
 --[[
-    Args: Number w, Number h
-    Desc: Paints the vgui frame
+Args: Number w, Number h
+Desc: Paints the vgui frame
 ]]
 function FRAME:Paint( w, h )
     surface.SetDrawColor( theme.background )
