@@ -96,11 +96,11 @@ function jobtest:VguiButton( text, parent, dock, hideTopOutline, doClick  )
 end
 
 --[[
-Args: String text, DPanel parent, Function onEnter
+Args: String text, DPanel parent, Function onChange
 Desc: Creates a vgui text entry accompanied by a dlabel
 Return: DPanel pnl, DTextEntry tEntry, (tEntry parented to pnl)
 ]]
-function jobtest:VguiTextEntry( text, parent, onEnter )
+function jobtest:VguiTextEntry( text, parent, onChange )
     local pad = ScreenScale( 3 )
 
     local pnl = vgui.Create( 'DPanel', parent )
@@ -145,7 +145,7 @@ function jobtest:VguiTextEntry( text, parent, onEnter )
             theme.text )
     end
 
-    tEntry.OnEnter = onEnter
+    tEntry.OnChange = onChange
 
     return pnl, tEntry
 end

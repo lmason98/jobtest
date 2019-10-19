@@ -36,6 +36,15 @@ function CREATETESTPANEL:Init( )
     newQ._font = 'jobtest_7b'
 
     local complete = jobtest:VguiButton( 'Complete', self, BOTTOM, false, function( )
+        for _, form in pairs( self.forms ) do
+            print( _ )
+            for k, val in pairs( form ) do
+                print( 'key: ' .. k )
+                print( tostring( val.data ) )
+                -- if ( formEle.data ) then
+                --     print( _ .. ': ' .. formEle.data ) end
+            end
+        end
         -- add form validation here
         -- have to write method on Test class to save created tests
     end )
@@ -95,7 +104,6 @@ function CREATETESTPANEL:CreateQPnl( )
     }
 
     for _, formEle in SortedPairs( form ) do
-        print(_)
         local pnl, tEntry = jobtest:VguiTextEntry( formEle.text, pnl, function( self )
             formEle.data = self:GetValue() end ) -- data = text on enter        
 
@@ -107,6 +115,8 @@ function CREATETESTPANEL:CreateQPnl( )
         pnl:Remove()
     end )
     removeQ:DockMargin( 0, 0, 0, parent.pad )
+
+    table.insert( self.forms, form )
 end
 
 vgui.Register( 'JobTestCreateTestPanel', CREATETESTPANEL, 'DPanel' )
