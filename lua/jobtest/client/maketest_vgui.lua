@@ -7,7 +7,6 @@ local EDITTESTPANEL = { }
 local CREATETESTPANEL = { }
 local REMOVETESTPANEL = { }
 
-
 --[[
 Desc: Inits the edit test panel
 ]]
@@ -24,19 +23,22 @@ function CREATETESTPANEL:Init( )
     local parent = self:GetParent()
     self:Hide()
     self.name = 'Create Test'
-    self.forms = {}
+    self.forms = { }
+    self.forms.testname = nil
 
-    local testName = jobtest:VguiTextEntry( 'test name:', self, function( self )
-        print( self:GetValue() ) end )
+    local pnl, tEntry = jobtest:VguiTextEntry( 'test name:', self, function( )
+        self.forms.testname = self:GetText() end )
+
+    print( tostring( tEntry ) )
+    self.testName = tEntry
 
     local newQ = jobtest:VguiButton( 'Add Question', self, TOP, false, function( ) 
-        self:CreateQPnl()
-    end )
+        self:CreateQPnl() end )
     newQ:DockMargin( parent.pad, parent.pad, parent.pad, parent.pad )
     newQ._font = 'jobtest_7b'
 
     local complete = jobtest:VguiButton( 'Complete', self, BOTTOM, false, function( )
-        -- add form validation here
+        self:ValidateForm()
         -- have to write method on Test class to save created tests
     end )
     complete:Dock( BOTTOM )
@@ -86,12 +88,12 @@ function CREATETESTPANEL:CreateQPnl( )
     pnl.Paint = function() end
 
     local form = {
-        [1] = { text='Question text:', numeric=false, data=nil },
-        [2] = { text='Choice 1 text:', numeric=false, data=nil },
-        [3] = { text='Choice 2 text:', numeric=false, data=nil },
-        [4] = { text='Choice 3 text:', numeric=false, data=nil },
-        [5] = { text='Choice 4 text:', numeric=false, data=nil },
-        [6] = { text='Correct Choice Number:', numeric=true, data=nil }
+        [1] = { text='Question text:', numeric=false, data=nil, entry=nil },
+        [2] = { text='Choice 1 text:', numeric=false, data=nil, entry=nil},
+        [3] = { text='Choice 2 text:', numeric=false, data=nil, entry=nil },
+        [4] = { text='Choice 3 text:', numeric=false, data=nil, entry=nil },
+        [5] = { text='Choice 4 text:', numeric=false, data=nil, entry=nil },
+        [6] = { text='Correct Choice Number:', numeric=true, data=nil, entry=nil }
     }
 
     for _, formEle in SortedPairs( form ) do
@@ -101,12 +103,62 @@ function CREATETESTPANEL:CreateQPnl( )
 
         pnl:DockMargin( 0, 0, 0, parent.pad )
         tEntry:SetNumeric( formEle.numeric )
+
+        formEle.entry = tEntry
     end
 
     local removeQ = jobtest:VguiButton( 'Remove Question', pnl, TOP, false, function( self )
         pnl:Remove()
     end )
     removeQ:DockMargin( 0, 0, 0, parent.pad )
+
+    table.insert( self.forms, form )
+end
+
+--[[
+Desc: Checks if all of the required form elements have been filled out
+Return: Bool validForm
+]]
+function CREATETESTPANEL:ValidateForm( )
+    if ( table.Count( self.forms ) == 0 ) then return false end
+
+    local blankField = 'This field cannot be blank.'
+
+    local complete = true
+
+    print( ' HELLO FUCKING WORLD GOD DMANIT ' )
+    print( tostring( self.testName ) )
+    if ( self.forms.testname == nil or self.forms.testname:match( '%S' ) == nil ) then
+        self.testName:SetText( blankField )
+        complete = false
+    end
+
+    for i, form in pairs( self.forms ) do
+        -- want to update all of the incomplete questions
+        print( form[1].data )
+        if ( form[1].data == nil or form[1].data:match( '%S' ) == nil ) then
+            form[1].entry:SetText( blankField )
+            complete = false
+        end if ( form[1].data == nil or form[2].data:match( '%S' ) == nil ) then 
+            form[2].entry:SetText( blankField )
+            complete = false
+        end if ( form[1].data == nil or form[3].data:match( '%S' ) == nil ) then
+            form[3].entry:SetText( blankField )
+            complete = false
+        end if ( form[1].data == nil or form[6].data:match( '%S' ) == nil ) then
+            form[6].entry:SetText( blankField )
+            complete = false
+        end
+    end
+
+    return complete
+end
+
+--[[
+Desc: Creates a test object out of a complete form and sends it to the server to be saved
+]]
+function CREATETESTPANEL:SaveNewTest( )
+    -- pass
 end
 
 vgui.Register( 'JobTestCreateTestPanel', CREATETESTPANEL, 'DPanel' )
