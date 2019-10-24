@@ -38,7 +38,20 @@ function CREATETESTPANEL:Init( )
     newQ._font = 'jobtest_7b'
 
     local complete = jobtest:VguiButton( 'Complete', self, BOTTOM, false, function( )
+<<<<<<< HEAD
         self:ValidateForm()
+=======
+        for _, form in pairs( self.forms ) do
+            print( _ )
+            for k, val in pairs( form ) do
+                print( 'key: ' .. k )
+                print( tostring( val.data ) )
+                -- if ( formEle.data ) then
+                --     print( _ .. ': ' .. formEle.data ) end
+            end
+        end
+        -- add form validation here
+>>>>>>> 5e3f7eb2116ff08b7d5f08331db4b07412d7f4dc
         -- have to write method on Test class to save created tests
     end )
     complete:Dock( BOTTOM )
@@ -97,7 +110,6 @@ function CREATETESTPANEL:CreateQPnl( )
     }
 
     for _, formEle in SortedPairs( form ) do
-        print(_)
         local pnl, tEntry = jobtest:VguiTextEntry( formEle.text, pnl, function( self )
             formEle.data = self:GetValue() end ) -- data = text on enter        
 
@@ -113,6 +125,7 @@ function CREATETESTPANEL:CreateQPnl( )
     removeQ:DockMargin( 0, 0, 0, parent.pad )
 
     table.insert( self.forms, form )
+<<<<<<< HEAD
 end
 
 --[[
@@ -159,6 +172,8 @@ Desc: Creates a test object out of a complete form and sends it to the server to
 ]]
 function CREATETESTPANEL:SaveNewTest( )
     -- pass
+=======
+>>>>>>> 5e3f7eb2116ff08b7d5f08331db4b07412d7f4dc
 end
 
 vgui.Register( 'JobTestCreateTestPanel', CREATETESTPANEL, 'DPanel' )
