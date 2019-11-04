@@ -1,38 +1,50 @@
-util.AddNetworkString 'jobtest_validate_test'
+util.AddNetworkString 'jobtest_text_sv_to_cl'
+util.AddNetworkString 'jobtest_open_admin_pnl_req'
 
-local defaultTest = jobtest:Test()
+jobtest.tests = {}
 
-jobtest.tests = { }
-jobtest.tests[1] = defaultTest
-
---[[ 
-Args: String name
-Desc: Fetches the test given the name if it exists, returns false otherwise
-Return: Test test or Bool false
-]]
-function jobtest:GetTest( name )
-    for _, t in pairs( self.tests ) do
-        if ( name == t:GetName() ) then
-            return t end
-    end
-
-    return false
-end
+local test = jobtest:Test({
+    name='Sample Test', 
+    questions={
+        [1]={
+            text='Are you awesome?',
+            choices={
+                [1]='yes',
+                [2]='no'
+            },
+            ans_index=1
+        }
+    }
+})
+table.insert(jobtest.tests, test)
 
 --[[
-Args: Number len, Player ply
-Desc: Checks if the selected test answers are correct
+Desc: Syncs Tests when a player initializes
 ]]
-local function validateTest( len, ply )
-    local name = net.ReadString()
-    local selected = net.ReadTable()
-
-    local testToCompare = jobtest:GetTest( name )
-    local passed = false
-
-    if ( testToCompare ) then
-        passed = testToCompare:Evaluate( selected ) end
-
-    print( 'You passed: ' .. tostring( passed ) )
+local function InitPlyTests(ply)
+    for i, test in pairs(jobtest.tests) do
+        jobtest:SyncTest(test.name, ply) end
 end
-net.Receive( 'jobtest_validate_test', validateTest )
+hook.Add('PlayerInitialSpawn', 'jobtest_sync_player_test', InitPlyTests)
+
+--[[
+Args: Player ply, String text
+Desc:
+]]
+local function ChatCommands(ply, text)
+    local cmd = text:Split(' ')[1]
+    cmd = cmd:sub(2)
+    print('cmd: ' .. cmd)
+    print('cfg: ' .. jobtest.cfg.admin_pnl_cmd)
+    print('cmd == cfg: ' .. cmd == jobtest.cfg.admin_pnl_cmd)
+    if cmd == jobtest.cfg.admin_pnl_cmd then
+        print('HEYYYYYYYYYYYYYY')
+        if ply:IsAdmin() then
+            print('hey')
+            net.Start('jobtest_open_admin_pnl_req')
+            net.Send(ply)
+            return false
+        end
+    end
+end
+hook.Add('PlayerSay', 'jobtest_chat_cmd', ChatCommands)

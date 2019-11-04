@@ -1,9 +1,6 @@
 jobtest.cfg = jobtest.cfg or
 {
-    -- groups that can create/edit/remove tests and also add/remove saved npcs
-    canEditGroups = {
-        ['superadmin'] = true
-    },
+    admin_pnl_cmd = 'jobtest',
 
     themes = {
         dark = {

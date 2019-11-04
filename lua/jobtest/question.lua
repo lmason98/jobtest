@@ -1,65 +1,51 @@
-local Question = { }
+local Question = {}
 
-AccessorFunc( Question, 'question_str', 'QString', FORCE_STRING )
-AccessorFunc( Question, 'choice_count', 'ChoiceCount', FORCE_NUMBER )
-AccessorFunc( Question, 'selected_index', 'Selected', FORCE_NUMBER )
-Question.choices = { }
+AccessorFunc(Question, 'text', 'Text', FORCE_STRING)
+Question.choices = {}
 
-if ( SERVER ) then
-    AccessorFunc( Question, 'answer_index', 'AnswerIndex', FORCE_NUMBER ) end
+if SERVER then
+    AccessorFunc(Question, 'ans_index', 'AnsIndex', FORCE_STRING) end
 
 --[[
-    Args: String qString Table answerChoices, (SERVER only) Number answerIndex
-    Desc: Question class constructor
-]]
-function Question:New( qString, answerChoices, answerIndex )
-    local this = table.Copy( Question )
+Args: Table qData
+Desc: Creates a Question object out of the qData
+Return: New Question object
+]]--
+function Question:New(qData)
+    if not qData then return end
 
-    if ( qString and isstring( qString ) ) then
-        this:SetQString( qString )
-    else
-        this:SetQString( 'You\'ve become the mayor, should you ... You\'ve become the mayor, should you ... You\'ve become the mayor, should you ... You\'ve become the mayor, should you ... ' )
+    local this = self
+
+    for k, data in pairs(qData) do
+        if k == 'text' then
+            this:SetText(data)
+        elseif k == 'choices' then
+            this.choices = data
+        elseif k == 'ans_index' and SERVER then
+            this:SetAnsIndex(data)
+        end
     end
-
-    if ( answerChoices and istable( answerChoices ) and #answerChoices >= 2 and #answerChoices <= 4 ) then
-        this.choices = answerChoices
-    else
-        this.choices = {
-            [1] = 'Raise taxes to 100%.',
-            [2] = 'Drift around the city in the mayor\'s limo. Drift around the city in the mayor\'s limo. Drift around the city in the mayor\'s limo. Drift around the city in the mayor\'s limo.',
-            [3] = 'Steal the city funds.',
-            [4] = 'Go and meet the city staff. Go and meet the city staff.Go and meet the city staff.Go and meet the city staff.Go and meet the city staff.Go and meet the city staff.Go and meet the city staff.Go and meet the city staff.Go and meet the city staff.Go and meet the city staff.Go and meet the city staff.'
-        }
-    end
-
-    if ( SERVER and answerIndex and isnumber( answerIndex ) ) then
-        this:SetAnswerIndex( answerIndex )
-    elseif ( SERVER ) then
-        this:SetAnswerIndex( 1 )
-    end
-
-    this:SetSelected( -1 )
 
     return this
 end
 
 --[[
-    Desc: Sends the question data to the server to be saved
+Desc: Returns the qData from the Question
+Return: Table qData
 ]]
-function Question:Sync( )
+function Question:GetData()
+    return {
+        text=self:GetText(),
+        choices=self.choices,
+        ans_index=self:GetAnsIndex() or nil
+    }
 end
 
---[[ 
-    Args: Number i 
-    Desc: Gets the question choice at the given index
-    Return: String choice
-]]
-function Question:GetChoice( i )
-    return self.choices[i] end
 
 --[[
-    Args: String qString, Table answerChoices, (SERVER only) Number answerIndex
-    Desc: question class constructor global wrapper
-]]
-function jobtest:Question( qString, questionData, answerIndex )
-    return Question:New( qString, questionData, answerIndex ) end
+Args: Table qData
+Desc: Creates a Question object out of the qData
+Return: New Question object
+]]--
+function jobtest:Question(qData)
+    return Question:New(qData) end
