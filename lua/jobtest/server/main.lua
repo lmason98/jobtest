@@ -3,20 +3,9 @@ util.AddNetworkString 'jobtest_open_admin_pnl_req'
 
 jobtest.tests = {}
 
-local test = jobtest:Test({
-    name='Sample Test', 
-    questions={
-        [1]={
-            text='Are you awesome?',
-            choices={
-                [1]='yes',
-                [2]='no'
-            },
-            ans_index=1
-        }
-    }
-})
+local test = jobtest:Test()
 table.insert(jobtest.tests, test)
+PrintTable(jobtest.tests)
 
 --[[
 Desc: Syncs Tests when a player initializes
@@ -34,13 +23,8 @@ Desc:
 local function ChatCommands(ply, text)
     local cmd = text:Split(' ')[1]
     cmd = cmd:sub(2)
-    print('cmd: ' .. cmd)
-    print('cfg: ' .. jobtest.cfg.admin_pnl_cmd)
-    print('cmd == cfg: ' .. cmd == jobtest.cfg.admin_pnl_cmd)
     if cmd == jobtest.cfg.admin_pnl_cmd then
-        print('HEYYYYYYYYYYYYYY')
         if ply:IsAdmin() then
-            print('hey')
             net.Start('jobtest_open_admin_pnl_req')
             net.Send(ply)
             return false

@@ -29,6 +29,7 @@ local function loadAddon( )
 
         -- vgui
         AddCSLuaFile 'jobtest/client/vgui_adminpnl.lua'
+        AddCSLuaFile 'jobtest/client/vgui_funcs.lua'
 
     elseif CLIENT then
 
@@ -43,6 +44,7 @@ local function loadAddon( )
 
         -- vgui
         include 'jobtest/client/vgui_adminpnl.lua'
+        include 'jobtest/client/vgui_funcs.lua'
 
     end
 end
