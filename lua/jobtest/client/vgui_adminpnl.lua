@@ -1,10 +1,12 @@
+-- parameterize dimensions for easy access
 local dims = {
     main = {
         w = ScrW() / 2,
         h = ScrH() * (2/3),
         font = ''
     },
-    togglepnl = {
+    toggle = {
+        topPad = 22,
         h = 1 / 8 -- 1/8 * dims.main.h
     }
 }
@@ -22,9 +24,37 @@ function CreateTest:Init()
     local p = self:GetParent()
 
     self = jobtest:AdminPnl(self, p)
+
     self.test = jobtest:Test()
+    self.qForms = {}
+    self:CreateScroll()
+end
+
+--[[
+Desc: Creates a new question form panel and form data structure
+]]
+function CreateTest:AddQForm()
+    local form = {
+        text = '',
+        choices = {[1]=nil,[2]=nil,[3]=nil,[4]=nil},
+        ans_index = -1
+    }
+    local pnl = vgui.Create('DPanel', self)
+
+    table.insert(self.qForms, form)
+end
+
+--[[
+Args: Number i
+Desc: 
+]]
+function CreateTest:ValidateQForm(i)
+    -- local valid = true
+    -- for k, data in pairs(self.qForms[i]) do
+    -- end
 end
 vgui.Register('JobtestCreatePnl', CreateTest, 'DPanel')
+
 --[[
 Desc: Inits the remove test panel.
 ]]
@@ -52,7 +82,7 @@ function TogglePnl:Init()
 
     self:DockPadding(0,0,0,0)
     self:Dock(TOP)
-    self:SetTall(p:GetTall() * dims.togglepnl.h)
+    self:SetTall(p:GetTall() * dims.toggle.h)
 
     self:BuildBtns(p)
 end
@@ -104,7 +134,7 @@ function MainFrame:Init()
     self:Center()
     self:MakePopup()
 
-    self:DockPadding(0,22,0,0)
+    self:DockPadding(0,dims.toggle.topPad,0,0)
 
     self.pnls = {
         create_test = {

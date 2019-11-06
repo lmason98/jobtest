@@ -11,7 +11,6 @@ Return: New Test object
 function Test:New(testData)
     local this = self
 
-    local hasName, hasQuestions = false, false
     if testData then
         for k, data in pairs(testData) do
             if k == 'name' then
@@ -23,25 +22,10 @@ function Test:New(testData)
                 hasQuestions = true
             end
         end
-    end
-
-    -- initial vals (testData == nil)
-    if not hasName then
+    else
+        -- initial vals (testData == nil)
         this:SetName('Sample Test')
-    end
-    if not hasQuestions then
-        local ansIndex = nil
-        if SERVER then ansIndex = 1 end
-        this.questions = {
-            [1]={
-                text='Are you awesome?',
-                choices={
-                    [1]='yes',
-                    [2]='no'
-                },
-                ans_index=ansIndex
-            }
-        }
+        this.questions = { jobtest:Question() }
     end
 
     return this
@@ -69,5 +53,4 @@ Desc: Creates a Test object out of the testData
 Return: New Test object
 ]]--
 function jobtest:Test(testData)
-    print('hellllllllllllllllpppppppppppP???')
     return Test:New(testData) end

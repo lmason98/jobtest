@@ -1,13 +1,13 @@
 --[[
-Args: DPanel this, DPanel parent
+Args: DPanel this, DPanel parent, Number height
 Desc: Base panel for jobtest admin panel
 Return: Dpanel this
 ]]
-function jobtest:AdminPnl(this, p)
+function jobtest:AdminPnl(this, p, h)
     this:Dock(FILL)
     this:DockPadding(0,ScreenScale(20),0,ScreenScale(20)) 
 
-    this.createScroll = function(this)
+    this.CreateScroll = function(this)
         local scroll = vgui.Create('DScrollPanel', this)
         scroll:Dock(FILL)
 

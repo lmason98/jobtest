@@ -12,18 +12,23 @@ Desc: Creates a Question object out of the qData
 Return: New Question object
 ]]--
 function Question:New(qData)
-    if not qData then return end
-
     local this = self
 
-    for k, data in pairs(qData) do
-        if k == 'text' then
-            this:SetText(data)
-        elseif k == 'choices' then
-            this.choices = data
-        elseif k == 'ans_index' and SERVER then
-            this:SetAnsIndex(data)
+    if qData then
+        for k, data in pairs(qData) do
+            if k == 'text' then
+                this:SetText(data)
+            elseif k == 'choices' then
+                this.choices = data
+            elseif k == 'ans_index' and SERVER then
+                this:SetAnsIndex(data)
+            end
         end
+    else
+        -- initial vals (qData == nil)
+        self:SetText('Are you awesome?')
+        self.choices = {[1]='yes',[2]='no'}
+        if SERVER then this:SetAnsIndex(1) end
     end
 
     return this

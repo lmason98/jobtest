@@ -8,6 +8,7 @@ table.insert(jobtest.tests, test)
 PrintTable(jobtest.tests)
 
 --[[
+Args: Player ply
 Desc: Syncs Tests when a player initializes
 ]]
 local function InitPlyTests(ply)
@@ -18,7 +19,7 @@ hook.Add('PlayerInitialSpawn', 'jobtest_sync_player_test', InitPlyTests)
 
 --[[
 Args: Player ply, String text
-Desc:
+Desc: Handles the addon chat commands
 ]]
 local function ChatCommands(ply, text)
     local cmd = text:Split(' ')[1]
