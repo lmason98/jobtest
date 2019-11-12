@@ -1,6 +1,7 @@
 local Question = {}
 
 AccessorFunc(Question, 'text', 'Text', FORCE_STRING)
+AccessorFunc(Question, 'selected_index', 'SelectedIndex', FORCE_STRING)
 Question.choices = {}
 
 if SERVER then
@@ -16,10 +17,13 @@ function Question:New(qData)
 
     if qData then
         for k, data in pairs(qData) do
+            print('que k: ' .. k)
             if k == 'text' then
                 this:SetText(data)
             elseif k == 'choices' then
                 this.choices = data
+            elseif k == 'selected_index' then
+                this:SetSelectedIndex(data)
             elseif k == 'ans_index' and SERVER then
                 this:SetAnsIndex(data)
             end

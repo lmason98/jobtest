@@ -1,11 +1,12 @@
-jobtest.tests = {}
-
 --[[
 Desc: Receives Test data from the server and saves a Test object to the client
 test table.
 ]]
 local function ReceiveTestSync()
     local tData = util.JSONToTable(net.ReadString())
+
+    if not jobtest.tests then
+        jobtest.tests = {} end
 
     local testExists = false
     for i, test in pairs(jobtest.tests) do
@@ -17,7 +18,8 @@ local function ReceiveTestSync()
     end
 
     if not testExists then
-        table.insert(jobtest.tests, jobtest:Test(tData)) end
+        local test = jobtest:Test(tdata)
+        table.insert(jobtest.tests, test) end
 end
 net.Receive('jobtest_text_sv_to_cl', ReceiveTestSync)
 

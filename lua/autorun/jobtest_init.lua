@@ -41,6 +41,7 @@ local function loadAddon( )
 
         -- client
         include 'jobtest/client/main.lua'
+        include 'jobtest/client/fonts.lua'
 
         -- vgui
         include 'jobtest/client/vgui_adminpnl.lua'

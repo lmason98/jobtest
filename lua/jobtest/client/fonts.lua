@@ -11,6 +11,8 @@ local function CreateFont(name, scale, bold)
         name = name .. 'b'
     end
 
+    print(name)
+
     surface.CreateFont(name, {
         font = 'Roboto',
         size = ScreenScale(scale),
@@ -18,3 +20,6 @@ local function CreateFont(name, scale, bold)
         antialias = true
     })
 end
+
+CreateFont('jtest', 15, true)
+CreateFont('jtest', 12, true)

@@ -16,6 +16,7 @@ local function InitPlyTests(ply)
         jobtest:SyncTest(test.name, ply) end
 end
 hook.Add('PlayerInitialSpawn', 'jobtest_sync_player_test', InitPlyTests)
+InitPlyTests(player.GetAll()[1])
 
 --[[
 Args: Player ply, String text
