@@ -32,29 +32,47 @@ Desc: Inits the TestForm panel
 function TestForm:Init()
     self.p = self:GetParent()
 
-    self:Dock(FILL)
-    self:InvalidateParent(true)
     self.test = nil
+
+    timer.Simple(0, function()
 
     local header_h = self:GetTall() * dims.test_form.header_h
 
-    local header = vgui.Create('DPanel', self)
-    header:Dock(TOP)
-    header:InvalidateParent(true)
-    header:SetTall(header_h)
+    self.scroll = vgui.Create('DScrollPanel', self)
+    self.scroll:Dock(FILL)
+    self.scroll:InvalidateParent(true)
+    self.scroll.Paint = function(s, w, h)
+        surface.SetDrawColor(255,255,255)
+        surface.DrawRect(0,0,w,h)
+    end
 
-    -- local footer = vgui.Create('DPanel', self)
-    -- header:Dock(BOTTOM)
-    -- header:InvalidateParent(true)
-    -- header:SetTall(header_h)
+    self.header = vgui.Create('DPanel', self)
+    self.header:Dock(TOP)
+    self.header:SetTall(header_h)
+    self.header:InvalidateParent(true)
 
-    -- local scroll = vgui.Create('DScrollPanel', self)
-    -- header:Dock(FILL)
-    -- header:InvalidateParent(true)
+    self.footer = vgui.Create('DPanel', self)
+    self.footer:Dock(BOTTOM)
+    self.footer:SetTall(header_h)
+    self.footer:InvalidateParent(true)
 
-    self.header = header
-    self.scroll = scroll
-    self.footer = footer
+    self.header:Hide()
+    self.scroll:Hide()
+    self.footer:Hide()
+
+    end)
+end
+
+--[[
+Desc: Sets the test of the TestForm panel
+]]
+function TestForm:SetTest(test)
+    self.header:Show() 
+    print('height: ' .. self.header:GetTall())
+    print('test:')
+    PrintTable(test)
+
+    self.test = test
 end
 
 --[[
@@ -75,8 +93,8 @@ Desc: Inits the TestSelect panel
 function TestSelect:Init()
     self.p = self:GetParent()
 
-    self:Dock(LEFT)
-    self:InvalidateParent(true)
+    -- sort of hacky but dims are wrong otherwise.
+    timer.Simple(0, function()
 
     local w = self.p:GetWide() * dims.test_select.w -- normal width
     local wTo = w * dims.test_select.tgl_btn_w -- collapse width
@@ -105,7 +123,6 @@ function TestSelect:Init()
     self.scroll:InvalidateParent(true)
     self.scroll:GetVBar():SetWide(0) -- people can scroll
 
-
     self.createBtn = jobtest:VguiBtn(self.scroll, TOP, 'Create New Test', 'jtest_12b',
         function(this)
             -- pass
@@ -116,11 +133,18 @@ function TestSelect:Init()
     for i, test in pairs(jobtest.tests) do
         local selectTest = jobtest:VguiBtn(self.scroll, TOP, test.name, 'jtest_12b',
         function(this)
-            -- pass
+            self.p.test_form:SetTest(test)            
         end, btnH)
+
+        print(selectTest)
+        print(selectTest:GetWide())
+        print(selectTest:GetTall())
+        print(btnH)
 
         table.insert(self.selectBtns, selectTest)
     end
+
+    end)
 end
 
 --[[
@@ -146,8 +170,15 @@ function MainFrame:Init()
     self:Center()
     self:MakePopup()
 
-    vgui.Create('JobtestTestSelect', self)
-    vgui.Create('JobtestTestForm', self)
+    self:InvalidateLayout(true)
+    self.test_form = vgui.Create('JobtestTestForm', self)
+    self.test_form:Dock(FILL)
+    self.test_form:InvalidateParent(true)
+
+    self:InvalidateLayout(true)
+    self.test_select = vgui.Create('JobtestTestSelect', self)
+    self.test_select:Dock(LEFT)
+    self.test_select:InvalidateParent(true)
 end
 vgui.Register('JobtestAdminMainFrame', MainFrame, 'DFrame')
 

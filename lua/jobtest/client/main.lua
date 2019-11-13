@@ -24,6 +24,20 @@ end
 net.Receive('jobtest_text_sv_to_cl', ReceiveTestSync)
 
 --[[
+Args: String name
+Desc: Gets the test with the given name
+Return: Test test or nil
+]]
+function jobtest:GetTest(name)
+    if not jobtest.tests then return end
+
+    for i, test in pairs(jobtest.tests) do
+        if test.name == name then
+            return test end
+    end
+end
+
+--[[
 Desc: Receives a admin pnl open request
 ]]
 local function OpenAdminPnl()

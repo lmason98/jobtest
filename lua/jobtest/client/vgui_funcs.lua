@@ -31,3 +31,26 @@ function jobtest:VguiBtn(p, d, t, f, cBack, w_h)
 
     return btn
 end
+
+--[[
+Args: DPanel parent, Number dock, String text, String font, Function callBack, Number width or height
+Desc: Base button for jobtest panels
+Return: DPanel prntPnl, DTextEntry entry
+]]
+function jobtest:VguiTextEntry(p, d, t, f, cBack, w_h)
+    local pnl = vgui.Create('DPanel', p)
+    pnl:Dock(d)
+    pnl:InvalidateParent(true)
+    
+    if d == LEFT or d == RIGHT then
+        pnl:SetWide(w_h)
+    elseif d == TOP or d == BOTTOM then
+        pnl:SetTall(w_h)
+    end
+
+    local lbl = vgui.Create('DLabel', pnl)
+    lbl:SetText(t)
+    lbl:SetFont(f)
+    lbl:Dock(LEFT)
+    lbl:SetWide(pnl:GetWide() * 1/5)
+end
