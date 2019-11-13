@@ -46,6 +46,7 @@ function Question:GetData()
     return {
         text=self:GetText(),
         choices=self.choices,
+        selected_index=self:GetSelectedIndex(),
         ans_index=self:GetAnsIndex() or nil
     }
 end

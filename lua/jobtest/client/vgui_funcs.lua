@@ -33,11 +33,11 @@ function jobtest:VguiBtn(p, d, t, f, cBack, w_h)
 end
 
 --[[
-Args: DPanel parent, Number dock, String text, String font, Function callBack, Number width or height
+Args: DPanel parent, Number dock, String labelText, String entryT, String font, Function callBack, Number width or height
 Desc: Base button for jobtest panels
 Return: DPanel prntPnl, DTextEntry entry
 ]]
-function jobtest:VguiTextEntry(p, d, t, f, cBack, w_h)
+function jobtest:VguiTextEntry(p, d, lblT, entryT, f, cBack, w_h)
     local pnl = vgui.Create('DPanel', p)
     pnl:Dock(d)
     pnl:InvalidateParent(true)
@@ -49,8 +49,25 @@ function jobtest:VguiTextEntry(p, d, t, f, cBack, w_h)
     end
 
     local lbl = vgui.Create('DLabel', pnl)
-    lbl:SetText(t)
-    lbl:SetFont(f)
     lbl:Dock(LEFT)
     lbl:SetWide(pnl:GetWide() * 1/5)
+    lbl:SetText('')
+
+    lbl.Paint = function(s, w, h)
+        surface.SetDrawColor(255,255,255)
+        surface.DrawRect(0,0,w,h)
+
+        draw.SimpleText(lblT, f, w/2, h/2, Color(0,0,0), TEXT_ALIGN_CENTER,
+            TEXT_ALIGN_CENTER)
+
+        surface.SetDrawColor(0,0,0)
+        surface.DrawOutlinedRect(0,0,w,h)
+    end
+
+    local tEntry = vgui.Create('DTextEntry', pnl)
+    tEntry:Dock(FILL)
+    tEntry:SetText('')
+    tEntry:SetFont(f)
+
+    return pnl, tEntry
 end

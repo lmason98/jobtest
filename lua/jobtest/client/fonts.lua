@@ -7,7 +7,7 @@ local function CreateFont(name, scale, bold)
     name = name .. '_' .. tostring(scale)
 
     if (bold) then
-        weight = 800
+        weight = 1000
         name = name .. 'b'
     end
 
@@ -23,3 +23,4 @@ end
 
 CreateFont('jtest', 15, true)
 CreateFont('jtest', 12, true)
+CreateFont('jtest', 10, false)
