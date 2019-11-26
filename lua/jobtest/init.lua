@@ -2,6 +2,7 @@ jobtest = {}
 
 local sv_files = file.Find('jobtest/sv/*.lua', 'LUA')
 local cl_files = file.Find('jobtest/cl/*.lua', 'LUA')
+local vgui_files = file.Find('jobtest/cl/vgui/*.lua', 'LUA')
 local sh_files = file.Find('jobtest/*.lua', 'LUA')
 
 -- include sv files
@@ -19,6 +20,8 @@ AddCSLuaFile 'cl_init.lua'
 
 for i, file in ipairs(cl_files) do
     AddCSLuaFile('cl/' .. file) end
+for i, file in ipairs(vgui_files) do
+    AddCSLuaFile('cl/vgui/' .. file) end
 for i, file in ipairs(sh_files) do
     if file ~= 'init.lua' and file ~= 'cl_init.lua' then
         print('file: ' .. file)
