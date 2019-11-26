@@ -9,8 +9,9 @@ function _vgui.outline(self, w, h)
     surface.DrawOutlinedRect(0,0,w,h)
 end
 
--- Desc: Base _vgui button
 -- Args: DPanel parent, String text, Function callback
+-- Desc: Base vgui button
+-- Return: DButton btn
 function _vgui.button(parent, text, callback)
     local btn = vgui.Create('DButton', parent)
     btn:SetText('')
@@ -26,6 +27,28 @@ function _vgui.button(parent, text, callback)
     btn.DoClick = callback
 
     return btn
+end
+
+-- Args: DPanel parent, String text, Function callback
+-- Desc: Base vgui text entry
+-- Return: DPanel entryPnl, DTextEntry entry
+function _vgui.textEntry(parent, text, callback)
+    local entryPnl = vgui.Create('DPanel', parent)
+    entryPnl.text = text
+
+    entryPnl.Paint = function(self, w, h)
+        _vgui.outline(self, w, h)
+
+        draw.SimpleText(self.text .. ':', 'DermaDefault', ScreenScale(3), h/2, Color(0,0,0),
+            TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+    end
+
+    local entry = vgui.Create('DTextEntry', entryPnl)
+    entry:DockMargin(ScreenScale(30),0,0,0)
+    entry:Dock(FILL)
+    entry:InvalidateParent(true)
+
+    return entryPnl, entry
 end
 
 jobtest.vgui = _vgui 

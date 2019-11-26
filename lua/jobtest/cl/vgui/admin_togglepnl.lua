@@ -18,6 +18,7 @@ function PANEL:BuildButtons()
     local w = self:GetWide()
     local wTo = w/8
 
+    -- collapses the test select panel in and out.
     self.collpase_btn = jobtest.vgui.button(self, '<',
     function(this) -- collapse animation
         if not this.collapsed then
@@ -34,6 +35,7 @@ function PANEL:BuildButtons()
     self.collpase_btn:InvalidateParent(true)
     self.collpase_btn:SetWide(self:GetWide()/8)
 
+    -- test buttons, remove later
     for i = 1, 20 do
         local selectBtn = jobtest.vgui.button(self, tostring(i), function() end)
         selectBtn:Dock(TOP)
