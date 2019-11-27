@@ -29,10 +29,10 @@ function _vgui.button(parent, text, callback)
     return btn
 end
 
--- Args: DPanel parent, String text, Function callback
+-- Args: DPanel parent, String text
 -- Desc: Base vgui text entry
 -- Return: DPanel entryPnl, DTextEntry entry
-function _vgui.textEntry(parent, text, callback)
+function _vgui.textEntry(parent, text)
     local entryPnl = vgui.Create('DPanel', parent)
     entryPnl.text = text
 

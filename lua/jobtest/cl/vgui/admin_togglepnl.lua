@@ -8,6 +8,8 @@ function PANEL:Init()
 
     local vbar = self.scroll:GetVBar()
     vbar:SetWide(0) -- hide the vertical bar, people can scroll here
+
+    print(' PANEL:Init()')
 end
 
 -- Overwrite paint function
