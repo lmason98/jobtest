@@ -10,6 +10,7 @@ end
 function FRAME:BuildPanels()
     -- main panel
     self.main_pnl = vgui.Create('JobtestAdminMainPanel', self)
+    print('self.main_pnl: ' .. tostring(self.main_pnl))
     self.main_pnl:DockMargin(self.mgn,self.mgn,self.mgn,self.mgn)
     self.main_pnl:DockPadding(self.main_pad,self.main_pad,self.main_pad,self.main_pad)
     self.main_pnl:Dock(FILL)
@@ -18,6 +19,7 @@ function FRAME:BuildPanels()
 
     -- toggle panel
     self.toggle_pnl = vgui.Create('JobtestAdminTogglePanel', self)
+    print('self.toggle_pnl: ' .. tostring(self.toggle_pnl))
     self.toggle_pnl:DockMargin(self.mgn,self.mgn,0,self.mgn) -- 0 on the right for even spacing
     self.toggle_pnl:Dock(LEFT)
     self.toggle_pnl:InvalidateParent(true)

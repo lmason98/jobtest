@@ -99,7 +99,13 @@ end
 -- Args: Int index
 -- Desc: Returns the inputted form data from the i'th qForm
 -- Return: Table data
-function PANEL:GetFormData(i)
+function PANEL:GetQFormData(i)
+
+end
+
+-- Desc: Returns a table containing all the test data
+-- Return: Table data
+function PANEL:GetFormData()
 end
 
 -- Args: DPanel qForm 
