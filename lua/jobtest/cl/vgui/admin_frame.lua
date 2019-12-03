@@ -1,13 +1,13 @@
-local FRAME = {}
+local frame = {}
 
 -- Desc: Inits the jobtest admin frame, allows admins to add/edit/remove tests.
-function FRAME:Init()
+function frame:Init()
     self.mgn = ScreenScale(3)
     self.main_pad = ScreenScale(3)
 end
 
 -- Desc: Builds the admin frame panels
-function FRAME:BuildPanels()
+function frame:BuildPanels()
     -- main panel
     self.main_pnl = vgui.Create('JobtestAdminMainPanel', self)
     print('self.main_pnl: ' .. tostring(self.main_pnl))
@@ -29,7 +29,7 @@ function FRAME:BuildPanels()
     self.Paint = jobtest.vgui.outline
 end
 
-vgui.Register('JobtestAdminFrame', FRAME, 'DFrame')
+vgui.Register('JobtestAdminFrame', frame, 'DFrame')
 
 concommand.Add('jobtestadminframe', function()
     local frame = vgui.Create('JobtestAdminFrame')

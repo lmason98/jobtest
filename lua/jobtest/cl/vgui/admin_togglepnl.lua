@@ -1,7 +1,7 @@
-local PANEL = {}
+local togglePanel = {}
 
 -- Desc: Builds a scroll panel on top to hold all potential tests
-function PANEL:Init()
+function togglePanel:Init()
     self.scroll = vgui.Create('DScrollPanel', self)
     self.scroll:Dock(FILL)
     self.scroll:InvalidateParent(true)
@@ -9,14 +9,14 @@ function PANEL:Init()
     local vbar = self.scroll:GetVBar()
     vbar:SetWide(0) -- hide the vertical bar, people can scroll here
 
-    print(' PANEL:Init()')
+    print(' togglePanel:Init()')
 end
 
 -- Overwrite paint function
-PANEL.Paint = jobtest.vgui.outline
+togglePanel.Paint = jobtest.vgui.outline
 
 -- Desc: Builds the test create and select buttons
-function PANEL:BuildButtons()
+function togglePanel:BuildButtons()
     local w = self:GetWide()
     local wTo = w/8
 
@@ -48,4 +48,4 @@ function PANEL:BuildButtons()
     end
 end
 
-vgui.Register('JobtestAdminTogglePanel', PANEL, 'DPanel')
+vgui.Register('JobtestAdminTogglePanel', togglePanel, 'DPanel')

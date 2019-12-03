@@ -1,9 +1,9 @@
-local PANEL = {}
+local testForm = {}
 
 -- Args: DPanel pnl
 -- Desc: Builds a collapsable question form, can edit question attributes here.
 -- Return: DPanel pnl
-function PANEL:BuildQForm(pnl)
+function testForm:BuildQForm(pnl)
     local height = 0
     pnl.form = {}
 
@@ -99,19 +99,19 @@ end
 -- Args: Int index
 -- Desc: Returns the inputted form data from the i'th qForm
 -- Return: Table data
-function PANEL:GetQFormData(i)
+function testForm:GetQFormData(i)
 
 end
 
 -- Desc: Returns a table containing all the test data
 -- Return: Table data
-function PANEL:GetFormData()
+function testForm:GetFormData()
 end
 
 -- Args: DPanel qForm 
 -- Desc: Gets the height of the qForm
 -- Return: Int height
-function PANEL:GetQFormHeight(qForm)
+function testForm:GetQFormHeight(qForm)
     local height = 0
 
     for i, element in ipairs(qForm.form) do
@@ -124,7 +124,7 @@ end
 
 -- Desc: Builds the form for the selected test from the toggle panel, can edit name
 -- and collapse questions here.
-function PANEL:BuildForm()
+function testForm:BuildForm()
     self.questions = {}
     
     self.test_name = jobtest.vgui.textEntry(self, 'Test Name')
@@ -156,17 +156,17 @@ end
 
 -- Desc: Builds the questions to a given test to be edited or removed, have
 -- to have a scroll panel here to hold all tests.
-function PANEL:Init()
+function testForm:Init()
     self.scroll = vgui.Create('DScrollPanel', self)
     self.scroll:Dock(FILL)
     self.scroll:InvalidateParent(true)
     self.pad = ScreenScale(3)
 
     local vbar = self.scroll:GetVBar()
-    vbar:SetWide(vbar:GetWide()*2/3)
+    vbar:SetWide(vbar:GetWide() * 2/3)
 end
 
 -- Overwrite paint function
-PANEL.Paint = jobtest.vgui.outline
+testForm.Paint = jobtest.vgui.outline
 
-vgui.Register('JobtestAdminMainPanel', PANEL, 'DPanel')
+vgui.Register('JobtestAdminMainPanel', testForm, 'DPanel')
