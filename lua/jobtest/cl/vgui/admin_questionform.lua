@@ -15,6 +15,19 @@ function questionForm:BuildForm()
         entryPnl:SetTall(ScreenScale(8))
         table.insert(self.form, {pnl=entryPnl, entry=entry})
     end
+
+    pnl.form[1].pnl.text = 'Question text'
+    pnl.form[2].pnl.text = 'Choice 1'
+    pnl.form[3].pnl.text = 'Choice 2'
+    pnl.form[4].pnl.text = 'Choice 3'
+    pnl.form[5].pnl.text = 'Choice 4'
+    pnl.form[6].pnl.text = 'Answer number'
+end
+
+-- Args: DPanel questionForm 
+-- Desc: Gets the height of the questionForm
+-- Return: Num height
+function questionForm:GetHeight()
 end
 
 -- Desc: Inits a question form panel
