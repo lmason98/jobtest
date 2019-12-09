@@ -2,27 +2,29 @@ local questionForm = {}
 -- Overwrite paint function
 questionForm.Paint = jobtest.vgui.outline
 
-function questionForm:BuildForm()
-    local parent = self:GetParent()
-    local height = 0
+-- Desc: Inits a question form panel
+function questionForm:Init()
+    self.pad = ScreenScale(3)
+    self.form = {}
+    self.text = {
+        [1] = 'Question text',
+        [2] = 'Choice 1',
+        [3] = 'Choice 2',
+        [4] = 'Choice 3',
+        [5] = 'Choice 4',
+        [6] = 'Answer Number'
+    }
+end
 
-    print(' HEYO')
-    for i = 1,6 do
-        local entryPnl, entry = jobtest.vgui.textEntry(self, 'blah', function() end)
-        entryPnl:DockMargin(0,ScreenScale(1),0,0)
-        entryPnl:Dock(TOP)
-        entryPnl:InvalidateParent(true)
-        entryPnl:SetTall(ScreenScale(8))
-        entryPnl.text = self.text[i]
-        table.insert(self.form, {pnl=entryPnl, entry=entry})
-    end
+-- Desc: Builds the remove button
+function questionForm:RemoveBtn()
+    local parent = self:GetParent()
 
     self.remove_btn = jobtest.vgui.button(self, 'Remove this Question',
     function(this)
         -- slide out animation
         local posX, posY = self:GetPos()
         self:MoveTo(self:GetWide(), posY, 0.2, 0, -1, function() 
-            print(' removing self.questions[' .. self.i .. ']')
             table.remove(parent.questions, self.i)
             local i = 1 -- make sure panel indicies are correct
             for _, q in ipairs(parent.questions) do
@@ -39,8 +41,10 @@ function questionForm:BuildForm()
     self.remove_btn:InvalidateParent(true)
     self.remove_btn:SetTall(ScreenScale(8))
     table.insert(self.form, {pnl=self.remove_btn})
+end
 
-    -- for collapse anim
+-- Desc: Builds the collapse button
+function questionForm:CollapseBtn()
     self.hidden = false
     self.hideForm = function(self)
         if not self.hidden then
@@ -85,37 +89,23 @@ function questionForm:BuildForm()
     self.collpase_btn:Dock(BOTTOM)
     self.collpase_btn:InvalidateParent(true)
     self.collpase_btn:SetTall(ScreenScale(8))
-    
-    return height
 end
 
--- Desc: Updatess the height of the question panel
--- Return: Number height
-function questionForm:UpdateHeight()
-    local height = 0
+function questionForm:BuildForm()
+    local parent = self:GetParent()
 
-    for i, element in ipairs(self.form) do
-        height = height + element.pnl:GetTall() + ScreenScale(1) end
+    for i = 1,6 do
+        local entryPnl, entry = jobtest.vgui.textEntry(self, 'blah', function() end)
+        entryPnl:DockMargin(0,ScreenScale(1),0,0)
+        entryPnl:Dock(TOP)
+        entryPnl:InvalidateParent(true)
+        entryPnl:SetTall(ScreenScale(8))
+        entryPnl.text = self.text[i]
+        table.insert(self.form, {pnl=entryPnl, entry=entry})
+    end
 
-    height = height + self.collpase_btn:GetTall()
-    self:SetTall(height)
-
-    print(' height: ' .. height)
-    return height + self.pad * 2 + ScreenScale(1)
-end
-
--- Desc: Inits a question form panel
-function questionForm:Init()
-    self.pad = ScreenScale(3)
-    self.form = {}
-    self.text = {
-        [1] = 'Question text',
-        [2] = 'Choice 1',
-        [3] = 'Choice 2',
-        [4] = 'Choice 3',
-        [5] = 'Choice 4',
-        [6] = 'Answer Number'
-    }
+    self:RemoveBtn()
+    self:CollapseBtn()
 end
 
 vgui.Register('JobtestAdminQuestionForm', questionForm, 'DPanel')
