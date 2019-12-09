@@ -8,8 +8,6 @@ function togglePanel:Init()
 
     local vbar = self.scroll:GetVBar()
     vbar:SetWide(0) -- hide the vertical bar, people can scroll here
-
-    print(' togglePanel:Init()')
 end
 
 -- Overwrite paint function

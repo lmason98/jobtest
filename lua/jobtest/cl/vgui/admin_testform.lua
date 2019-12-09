@@ -14,6 +14,7 @@ end
 -- Desc: Builds the form for the selected test from the toggle panel, can edit name
 -- and collapse questions here.
 function testForm:BuildForm()
+    local i = 1
     self.test_name = jobtest.vgui.textEntry(self, 'Test Name')
     self.test_name:DockMargin(0,self.pad,0,0)
     self.test_name:Dock(TOP)
@@ -27,9 +28,13 @@ function testForm:BuildForm()
         form:Dock(TOP)
         form:InvalidateParent(true)
 
-        height = form:BuildForm()
-        form:SetTall(100)
-        form:GetHeight()
+        form:BuildForm()
+        form:SizeToChildren(false, true)
+        form:SetTall(form:GetTall() + ScreenScale(9))
+
+        form.i = i
+
+        i = i + 1
     end)
     self.add_question:DockMargin(0,self.pad,0,0)
     self.add_question:Dock(TOP)
@@ -39,15 +44,15 @@ end
 -- Desc: Builds the questions to a given test to be edited or removed, have
 -- to have a scroll panel here to hold all tests.
 function testForm:Init()
+    self.pad = ScreenScale(3)
+    self.questions = {}
+
     self.scroll = vgui.Create('DScrollPanel', self)
     self.scroll:Dock(FILL)
     self.scroll:InvalidateParent(true)
-    self.pad = ScreenScale(3)
 
     local vbar = self.scroll:GetVBar()
     vbar:SetWide(vbar:GetWide() * 2/3)
-
-    self.questions = {}
 end
 
 -- Overwrite paint function

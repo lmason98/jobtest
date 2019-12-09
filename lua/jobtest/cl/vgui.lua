@@ -39,12 +39,12 @@ function _vgui.textEntry(parent, text)
     entryPnl.Paint = function(self, w, h)
         _vgui.outline(self, w, h)
 
-        draw.SimpleText(self.text .. ':', 'DermaDefault', ScreenScale(3), h/2, Color(0,0,0),
-            TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        draw.SimpleText(self.text .. ':', 'DermaDefault', ScreenScale(3), h/2,
+            Color(0,0,0), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
     end
 
     local entry = vgui.Create('DTextEntry', entryPnl)
-    entry:DockMargin(ScreenScale(30),0,0,0)
+    entry:DockMargin(ScreenScale(35),0,0,0)
     entry:Dock(FILL)
     entry:InvalidateParent(true)
 
